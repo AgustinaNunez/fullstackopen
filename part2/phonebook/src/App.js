@@ -1,13 +1,40 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+const removeMessage = (setMessage) => {
+  setTimeout(() => {
+    setMessage(null)
+  }, 3000)
+}
+
+const Notification = ({message, type}) => {
+  if (message === null) return null
+
+  const styles = {
+    color: type === 'error' ? 'tomato' : 'green',
+    backgroundColor: '#f1f1f1',
+    fontSize: '20px',
+    fontWeight: '700',
+    borderStyle: 'solid',
+    borderRadius: '5px',
+    padding: '10px',
+    marginBottom: '10px',
+  }
+
+  return (
+    <div style={styles}>
+      {message}
+    </div>
+  )
+}
+
 const Filter = ({filter, setFilter}) => (
   <div>
     filter shown with: <input type='text' value={filter} onChange={({target}) => setFilter(target.value)} />
   </div>
 )
 
-const PersonForm = ({persons, setPersons}) => {
+const PersonForm = ({persons, setPersons, setMessage}) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -20,12 +47,23 @@ const PersonForm = ({persons, setPersons}) => {
         personService
           .update(person.id, { ...person, number: newNumber })
           .then(data => setPersons(persons.map(p => p.id === person.id ? data : p)))
+          .then(() => setMessage({text: `Updated ${newName}`}))
+          .catch(() => {
+            setMessage({
+              text: `Information of ${person.name} has already been removed from server`,
+              type: 'error'
+            })
+            removeMessage(setMessage)
+          })
+          .then(() => removeMessage(setMessage))
       }
       return
     } 
     personService
       .create({ name: newName,  number: newNumber })
       .then(data => setPersons([...persons, data]))
+      .then(() => setMessage({text: `Added ${newName}`}))
+      .then(() => removeMessage(setMessage))
   }
 
   return (
@@ -43,10 +81,18 @@ const PersonForm = ({persons, setPersons}) => {
   )
 }
 
-const Person = ({id, number, name, deletePerson}) => {
+const Person = ({id, number, name, deletePerson, setMessage}) => {
   const onClickDelete = () => {
     if (window.confirm(`Delete ${name} ?`)) {
-      personService.deleteById(id).then(() => deletePerson(id))
+      personService.deleteById(id)
+        .then(() => deletePerson(id))
+        .catch(() => {
+          setMessage({
+            text: `Information of ${name} has already been removed from server`,
+            type: 'error'
+          })
+          removeMessage(setMessage)
+        })
     }
   }
 
@@ -57,7 +103,7 @@ const Person = ({id, number, name, deletePerson}) => {
   )
 }
 
-const Persons = ({filter, persons, setPersons}) => {
+const Persons = ({filter, persons, setPersons, setMessage}) => {
   const deletePerson = (id) => {
     setPersons(persons.filter(person => person.id !== id))
   }
@@ -74,6 +120,7 @@ const Persons = ({filter, persons, setPersons}) => {
               name={name}
               number={number}
               deletePerson={deletePerson}
+              setMessage={setMessage}
             />
           ))
       }
@@ -84,6 +131,7 @@ const Persons = ({filter, persons, setPersons}) => {
 const App = () => {
   const [persons, setPersons] = useState([])
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     personService.getAll().then(data => setPersons(data))
@@ -92,11 +140,12 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {message && <Notification message={message.text} type={message.type} />}
       <Filter filter={filter} setFilter={setFilter} />
       <h3>Add a new</h3>
-      <PersonForm persons={persons} setPersons={setPersons} />
+      <PersonForm persons={persons} setPersons={setPersons} setMessage={setMessage} />
       <h3>Numbers</h3>
-      <Persons filter={filter} persons={persons} setPersons={setPersons} />
+      <Persons filter={filter} persons={persons} setPersons={setPersons} setMessage={setMessage} />
     </div>
   )
 }
