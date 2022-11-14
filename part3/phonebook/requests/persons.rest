@@ -19,3 +19,6 @@ Content-Type: application/json
     "name": "Mati Figueroa",
     "number": "351-3123456"
 }
+
+###
+GET http://localhost:3001/api/hello

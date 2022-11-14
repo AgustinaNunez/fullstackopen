@@ -1,6 +1,16 @@
 const express = require('express')
+const morgan = require('morgan')
+
 const app = express()
 
+const unknownEndpoint = (req, res) => {
+    res.status(404).send({
+        error: 'Unknown endpoint'
+    })
+}
+
+morgan.token('req-body', (req, res) => JSON.stringify(req.body))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'))
 app.use(express.json())
 
 let persons = [
@@ -87,6 +97,8 @@ app.post('/api/persons', (req, res) => {
     
     res.json(person)
 })
+
+app.use(unknownEndpoint)
 
 const PORT = 3001
 app.listen(PORT, () => {
