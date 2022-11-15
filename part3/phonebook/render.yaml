@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: phonebook
+    env: node
+    repo: https://github.com/AgustinaNunez/fullstackopen.git
+    region: oregon
+    plan: free
+    branch: master
+    rootDir: ./part3/phonebook/backend
+    buildCommand: npm install && npm run build:ui
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        sync: false

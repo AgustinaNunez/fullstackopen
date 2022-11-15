@@ -9,7 +9,8 @@
 **/coverage
 
 # production
-**/build
+# used for deployment
+**/frontend/build
 
 # misc
 **.DS_Store
