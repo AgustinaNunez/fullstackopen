@@ -112,7 +112,7 @@ const Persons = ({filter, persons, setPersons, setMessage}) => {
     <>
       {
         persons
-          .filter(({name}) => name.includes(filter))
+          .filter(({name}) => name.toLowerCase().includes(filter.toLowerCase()))
           .map(({id, name, number}) => (
             <Person
               key={id}
