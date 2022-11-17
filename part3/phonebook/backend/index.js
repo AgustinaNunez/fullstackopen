@@ -1,7 +1,7 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-
 const app = express()
 
 const unknownEndpoint = (req, res) => {
@@ -15,6 +15,8 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :r
 app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
+
+const Person = require('./models/persons')
 
 let persons = [
     { 
@@ -40,7 +42,9 @@ let persons = [
 ]
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({}).then(persons => {
+        res.json(persons)
+    })
 })
 
 app.get('/info', (req, res) => {
@@ -53,13 +57,16 @@ app.get('/info', (req, res) => {
 
 app.get('/api/persons/:id', (req, res) => {
     const { id } = req.params
-    const person = persons.find(person => person.id === Number(id))
-    
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).end()
-    }
+    Person.findById(id)
+        .then(person => {
+            return person 
+                ? res.json(person)
+                : res.status(404).end
+        })
+        .catch(error => {
+            console.log(error)
+            res.status(500).end()
+        })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -69,7 +76,7 @@ app.delete('/api/persons/:id', (req, res) => {
     res.status(204).end()
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', async (req, res) => {
     const { body } = req
     if (!body) {
         return res.status(400).json({
@@ -84,21 +91,17 @@ app.post('/api/persons', (req, res) => {
         })
     }
     
-    const nameAlreadyExists = persons.find(person => person.name === name)
+    const nameAlreadyExists = await Person.find({ name: name })
     if (nameAlreadyExists) {
         return res.status(403).json({
             error: 'Name must be unique'
         })
     }
     
-    const person = {
-        name,
-        number,
-        id: Math.floor(Math.random() * 1000000)
-    }
-    persons = persons.concat(person)
-    
-    res.json(person)
+    const person = new Person({ name, number })
+    person.save().then(savedNote => 
+        res.json(savedNote)
+    )
 })
 
 app.use(unknownEndpoint)
