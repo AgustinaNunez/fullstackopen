@@ -48,12 +48,15 @@ const PersonForm = ({persons, setPersons, setMessage}) => {
           .update(person.id, { ...person, number: newNumber })
           .then(data => setPersons(persons.map(p => p.id === person.id ? data : p)))
           .then(() => setMessage({text: `Updated ${newName}`}))
-          .catch(() => {
+          .catch(error => {
+            const {data, status} = error.response
+            const errorMessage = status === 400 
+              ? data.error
+              : `Information of ${person.name} has already been removed from server`
             setMessage({
-              text: `Information of ${person.name} has already been removed from server`,
+              text: errorMessage,
               type: 'error'
             })
-            removeMessage(setMessage)
           })
           .then(() => removeMessage(setMessage))
       }
@@ -63,6 +66,13 @@ const PersonForm = ({persons, setPersons, setMessage}) => {
       .create({ name: newName,  number: newNumber })
       .then(data => setPersons([...persons, data]))
       .then(() => setMessage({text: `Added ${newName}`}))
+      .then(() => removeMessage(setMessage))
+      .catch(error => {
+        setMessage({
+          text: error.response.data.error,
+          type: 'error'
+        })
+      })
       .then(() => removeMessage(setMessage))
   }
 

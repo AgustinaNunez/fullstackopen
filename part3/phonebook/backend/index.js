@@ -37,9 +37,7 @@ app.get('/api/persons/:id', (req, res) => {
 app.delete('/api/persons/:id', (req, res, next) => {
     const { id } = req.params
     Person.findByIdAndRemove(id)
-        .then(result => {
-            res.status(204).end()
-        })
+        .then(() => res.status(204).end())
         .catch(err => next(err))
 })
 
@@ -47,39 +45,22 @@ app.put('/api/persons/:id', (req, res, next) => {
     const { id } = req.params
     const { number } = req.body
 
-    Person.findByIdAndUpdate(id, { number }, { new: true })
+    Person.findByIdAndUpdate(
+        id, 
+        { number }, 
+        { new: true, runValidators: true, context: 'query' }
+    )
         .then(updatedPerson => {
             res.json(updatedPerson)
         })
         .catch(err => next(err))
 })
 
-app.post('/api/persons', async (req, res) => {
-    const { body } = req
-    if (!body) {
-        return res.status(400).json({
-            error: 'Content missing'
-        })
-    }
-
-    const {name, number} = body
-    if (!name || !number) {
-        return res.status(400).json({
-            error: 'Content missing'
-        })
-    }
-    
-    const nameAlreadyExists = await Person.find({ name: name })
-    if (nameAlreadyExists.length > 0) {
-        return res.status(403).json({
-            error: 'Name must be unique'
-        })
-    }
-    
-    const person = new Person({ name, number })
-    person.save().then(savedNote => 
-        res.json(savedNote)
-    )
+app.post('/api/persons', async (req, res, next) => {
+    const { name, number } = req.body    
+    Person.create({ name, number })
+        .then(savedNote => res.json(savedNote))
+        .catch(err => next(err))
 })
 
 app.get('/info', async (req, res) => {
@@ -100,11 +81,20 @@ app.use(unknownEndpoint)
 
 const errorHandler = (err, req, res, next) => {
     console.error(err.message)
-    if (err.name === 'CastError') {
-        return res.status(400).send({
-            error: 'Invalid id'
-        })
+
+    switch(err.name) {
+        case 'CastError': {
+            return res.status(400).send({
+                error: 'Invalid id'
+            }) 
+        }
+        case 'ValidationError': {
+            return res.status(400).send({
+                error: err.message.split(': ').slice(1).join(': ').split(', ').map(v => v.split(': ')[1]).join('; ')
+            }) 
+        }
     }
+
     next(err)
 }
 app.use(errorHandler)
