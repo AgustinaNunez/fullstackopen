@@ -4,12 +4,6 @@ const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
 
-const unknownEndpoint = (req, res) => {
-    res.status(404).send({
-        error: 'Unknown endpoint'
-    })
-}
-
 morgan.token('req-body', (req, res) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'))
 app.use(cors())
@@ -18,41 +12,10 @@ app.use(express.json())
 
 const Person = require('./models/persons')
 
-let persons = [
-    { 
-      name: 'Arto Hellas', 
-      number: '040-123456',
-      id: 1
-    },
-    { 
-        name: 'Ada Lovelace', 
-        number: '39-44-5323523',
-        id: 2
-    },
-    { 
-        name: 'Dan Abramov', 
-        number: '12-43-234345',
-        id: 3
-    },
-    { 
-        name: 'Mary Poppendieck', 
-        number: '39-23-6423122',
-        id: 4
-    }
-]
-
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
         res.json(persons)
     })
-})
-
-app.get('/info', (req, res) => {
-    const now = new Date()
-    res.send(`
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${now}</p>
-    `)
 })
 
 app.get('/api/persons/:id', (req, res) => {
@@ -65,15 +28,30 @@ app.get('/api/persons/:id', (req, res) => {
         })
         .catch(error => {
             console.log(error)
-            res.status(500).end()
+            res.status(404).send({
+                error: 'Invalid id'
+            })
         })
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     const { id } = req.params
-    persons = persons.filter(person => person.id !== Number(id))
-    
-    res.status(204).end()
+    Person.findByIdAndRemove(id)
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(err => next(err))
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+    const { id } = req.params
+    const { number } = req.body
+
+    Person.findByIdAndUpdate(id, { number }, { new: true })
+        .then(updatedPerson => {
+            res.json(updatedPerson)
+        })
+        .catch(err => next(err))
 })
 
 app.post('/api/persons', async (req, res) => {
@@ -92,7 +70,7 @@ app.post('/api/persons', async (req, res) => {
     }
     
     const nameAlreadyExists = await Person.find({ name: name })
-    if (nameAlreadyExists) {
+    if (nameAlreadyExists.length > 0) {
         return res.status(403).json({
             error: 'Name must be unique'
         })
@@ -104,7 +82,32 @@ app.post('/api/persons', async (req, res) => {
     )
 })
 
+app.get('/info', async (req, res) => {
+    const now = new Date()
+    const totalPeople = await Person.count({})
+    res.send(`
+    <p>Phonebook has info for ${totalPeople} people</p>
+    <p>${now}</p>
+    `)
+})
+
+const unknownEndpoint = (req, res) => {
+    res.status(404).send({
+        error: 'Unknown endpoint'
+    })
+}
 app.use(unknownEndpoint)
+
+const errorHandler = (err, req, res, next) => {
+    console.error(err.message)
+    if (err.name === 'CastError') {
+        return res.status(400).send({
+            error: 'Invalid id'
+        })
+    }
+    next(err)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {

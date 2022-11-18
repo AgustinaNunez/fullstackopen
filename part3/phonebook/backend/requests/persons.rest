@@ -1,9 +1,17 @@
-
 ###
 GET http://localhost:3000/api/persons
 
 ###
-GET http://localhost:3000/api/persons/1
+GET http://localhost:3000/api/persons/63763af6fa89889434dba7d9
+
+###
+PUT http://localhost:3000/api/persons/6376370f4f71f0e2e503bac0
+Content-Type: application/json
+
+{
+    "name": "Sara Bustani",
+    "number": "351-31234534"
+}
 
 ###
 GET http://localhost:3000/info
@@ -16,8 +24,8 @@ POST http://localhost:3000/api/persons
 Content-Type: application/json
 
 {
-    "name": "Mati Figueroa",
-    "number": "351-3123456"
+    "name": "Homero Simpson",
+    "number": "555-5555555"
 }
 
 ###
