@@ -24,3 +24,27 @@ describe('total likes', () => {
     expect(result).toBe(5)
   })
 })
+
+describe('favorite blog', () => {
+  const list = [
+    {
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      likes: 5
+    },
+    {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12
+    }
+  ]
+
+  test('when list has only one blog, equals the likes of that', () => {
+    const result = listHelper.favoriteBlog(list)
+    expect(result).toEqual({
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12
+    })
+  })
+})

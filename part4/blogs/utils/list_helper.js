@@ -8,7 +8,12 @@ const totalLikes = (blogs) => {
   return blogs.reduce((sum, item) => sum + item.likes, 0)
 }
 
+const favoriteBlog = (blogs) => {
+  return blogs.sort((a,b) => b.likes - a.likes)[0]
+}
+
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoriteBlog
 }
