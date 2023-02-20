@@ -1,0 +1,13 @@
+###
+GET http://localhost:3001/api/blogs
+
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Hermione's blog",
+    "author": "Hermione Granger",
+    "url": "http://localhost:3001/api/blogs/123456",
+    "likes": 934
+}
