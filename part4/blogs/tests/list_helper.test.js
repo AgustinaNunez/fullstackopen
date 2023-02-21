@@ -39,7 +39,7 @@ describe('favorite blog', () => {
     }
   ]
 
-  test('when list has only one blog, equals the likes of that', () => {
+  test('returns the blog with most likes', () => {
     const result = listHelper.favoriteBlog(list)
     expect(result).toEqual({
       title: "Canonical string reduction",
