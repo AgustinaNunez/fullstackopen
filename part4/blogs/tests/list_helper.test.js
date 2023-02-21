@@ -48,3 +48,38 @@ describe('favorite blog', () => {
     })
   })
 })
+
+describe('most blogs', () => {
+  const list = [
+    {
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      likes: 5
+    },
+    {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12
+    },
+    {
+      title: "Photon",
+      author: "Einstein",
+      likes: 12
+    },
+    {
+      title: 'Relativity',
+      author: 'Einstein',
+      likes: 5
+    },
+    {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12
+    }
+  ]
+
+  test('returns the author with most blogs', () => {
+    const result = listHelper.mostBlogs(list)
+    expect(result).toBe('Edsger W. Dijkstra')
+  })
+})
