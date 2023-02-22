@@ -32,7 +32,13 @@ const newBlog = {
   likes: 9124
 }
 
+const newBlogWithoutLikes = {
+  title: "Vitamin C",
+  author: "Linus Pauling"
+}
+
 module.exports = {
   initialBlogs,
-  newBlog
+  newBlog,
+  newBlogWithoutLikes
 }
