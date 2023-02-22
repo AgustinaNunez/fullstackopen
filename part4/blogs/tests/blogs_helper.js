@@ -26,6 +26,13 @@ const initialBlogs = [
   }
 ]
 
+const newBlog = {
+  title: "Sérum de Quinton",
+  author: "René Quinton",
+  likes: 9124
+}
+
 module.exports = {
-  initialBlogs
+  initialBlogs,
+  newBlog
 }
