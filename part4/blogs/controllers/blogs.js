@@ -7,10 +7,28 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
+  const {
+    title,
+    author,
+    url,
+    likes
+  } = request.body
+
+  if (!title || !url) {
+    return response.status(400).send({
+      error: 'Missing values required'
+    })
+  }
+
+  const blog = new Blog({
+    title,
+    author,
+    url,
+    likes
+  })
 
   const result = await blog.save()
-  response.status(201).json(result)
+  response.status(201).send(result)
 })
 
 module.exports = blogsRouter

@@ -2,17 +2,17 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blogs')
-const { initialBlogs, newBlog, newBlogWithoutLikes } = require('./blogs_helper')
+const { initialBlogs, newBlog, newBlogWithoutLikes, newBlogWithoutUrl } = require('./blogs_helper')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
 
-  Promise.all(initialBlogs.map(async (initBlog) => {
+  for (const initBlog of initialBlogs) {
     const blog = new Blog(initBlog)
     await blog.save()
-  }))
+  }
 })
 
 test('blogs are returned as json', async () => {
@@ -61,6 +61,13 @@ test('if likes property is missing, it will return 0 likes', async () => {
   const blog = response.body
     .filter(blog => blog.title === newBlogWithoutLikes.title)[0]
   expect(blog.likes).toBe(0)
+})
+
+test('if url property is missing, it will return 400', async () => {
+  await api
+    .post('/api/blogs')
+    .send(newBlogWithoutUrl)
+    .expect(400)
 })
 
 afterAll(async () => {
