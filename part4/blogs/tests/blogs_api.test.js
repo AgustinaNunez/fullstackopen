@@ -76,15 +76,31 @@ describe('create a new blog', () => {
 
 describe('delete a blog', () => {
   test('can delete an existing blog by its id', async () => {
-    const responseBeforeDeleting = await api.get('/api/blogs')
-    const blog = responseBeforeDeleting.body[0]
+    const responseBefore = await api.get('/api/blogs')
+    const blog = responseBefore.body[0]
     
     await api
       .delete('/api/blogs/' + blog.id)
       .expect(204)
   
-    const responseAfterDeleting = await api.get('/api/blogs')
-    expect(responseAfterDeleting.body).toHaveLength(initialBlogs.length - 1)
+    const responseAfter = await api.get('/api/blogs')
+    expect(responseAfter.body).toHaveLength(initialBlogs.length - 1)
+  })
+})
+
+describe('update a blog', () => {
+  test('can update an existing blog by its id', async () => {
+    const newLikes = 18
+    const responseBefore = await api.get('/api/blogs')
+    const blog = responseBefore.body[0]
+    
+    await api
+      .put('/api/blogs/' + blog.id)
+      .send({ likes: newLikes })
+      .expect(200)
+  
+    const responseAfter = await api.get('/api/blogs')
+    expect(responseAfter.body[0].likes).toBe(newLikes)
   })
 })
 
