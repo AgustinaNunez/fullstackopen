@@ -6,8 +6,9 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Hermione's blog",
-    "author": "Hermione Granger",
-    "url": "http://localhost:3001/api/blogs/123456",
-    "likes": 934
+    "title": "Harry New Blog",
+    "author": "Harry Potter",
+    "url": "http://localhost:3001/api/blogs/123457",
+    "likes": 931,
+    "userId": "6408784e91958b0be9730ef6"
 }

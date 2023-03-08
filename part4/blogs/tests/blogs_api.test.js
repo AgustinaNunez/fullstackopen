@@ -2,12 +2,21 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blogs')
+const User = require('../models/user')
 const { initialBlogs, newBlog, newBlogWithoutLikes, newBlogWithoutUrl } = require('./blogs_helper')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
+  await User.deleteMany({})
+
+  const user = new User({
+    name: 'Harry',
+    username: 'harry',
+    passwordHash: 'harrypasswordhash'
+  })
+  await user.save()
 
   for (const initBlog of initialBlogs) {
     const blog = new Blog(initBlog)
@@ -39,9 +48,14 @@ describe('get all blogs', () => {
 
 describe('create a new blog', () => {
   test('can create a new blog', async () => {
+    const user = await User.findOne({})
+
     await api
       .post('/api/blogs')
-      .send(newBlog)
+      .send({
+        ...newBlog,
+        userId: user._id
+      })
       .expect(201)
   
     const response = await api
@@ -52,9 +66,14 @@ describe('create a new blog', () => {
   })
   
   test('if likes property is missing, it will return 0 likes', async () => {
+    const user = await User.findOne({})
+
     await api
       .post('/api/blogs')
-      .send(newBlogWithoutLikes)
+      .send({
+        ...newBlogWithoutLikes,
+        userId: user._id
+      })
       .expect(201)
   
     const response = await api
