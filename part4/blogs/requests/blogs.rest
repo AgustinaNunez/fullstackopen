@@ -4,11 +4,10 @@ GET http://localhost:3001/api/blogs
 ###
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhhcnJ5IiwiaWQiOiI2NDA4Nzg0ZTkxOTU4YjBiZTk3MzBlZjYiLCJpYXQiOjE2NzgzMjYxOTV9.jPBRox8nDmFTPYZtQ0D3xSA_zEPdIT5SgHQfi6PjJ2M
 
 {
     "title": "Harry New Blog",
-    "author": "Harry Potter",
     "url": "http://localhost:3001/api/blogs/123457",
-    "likes": 931,
-    "userId": "6408784e91958b0be9730ef6"
+    "likes": 931
 }
