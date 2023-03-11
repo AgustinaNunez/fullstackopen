@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
@@ -22,7 +23,9 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'MongoServerError') {
     return response.status(400).json({ error: error.message })
   } else if (error.name === 'JsonWebTokenError') {
-    return response.status(400).json({ error: error.message })
+    return response.status(401).json({ error: 'invalid token' })
+  } else if (error.name === 'TokenExpiredError') {
+    return response.status(401).json({ error: 'token expired' })
   } else if (error.name === 'Error') {
     return response.status(400).json({ error: error.message })
   }
@@ -30,8 +33,22 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
+const tokenExtractor = (request, _response, next) => {
+  const authorization = request.get('authorization').replace(/^'|'$/g, '')
+  const authClean = authorization && authorization.startsWith('Bearer ')
+    ? authorization.replace('Bearer ', '')
+    : null
+  const decodedToken = jwt.verify(authClean, process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  request.token = decodedToken
+  next()
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }
