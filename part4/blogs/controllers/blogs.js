@@ -38,13 +38,20 @@ blogsRouter.post('/', async (request, response, next) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
   const { id } = request.params
-  const blog = await Blog.findByIdAndRemove(id)
-  if (!blog) {
+
+  const blogToRemove = await Blog.findById(id)
+  if (!blogToRemove) {
     return response.status(404).send({
       error: 'Blog not found'
     })
   }
+  if (!blogToRemove.user.toString() !== request.token.id) {
+    return response.status(401).send({
+      error: 'user unauthorized'
+    })
+  }
 
+  await Blog.findByIdAndRemove(id)
   response.status(204).end()
 })
 
