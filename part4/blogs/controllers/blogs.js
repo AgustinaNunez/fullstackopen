@@ -17,18 +17,22 @@ blogsRouter.post('/', async (request, response, next) => {
       url,
       likes
     } = request.body
-    const user = await User.findById(request.token.id)
+
+    const {
+      name: userName,
+      _id: userId
+    } = request.user
 
     const blog = new Blog({
       title,
-      author: user.name,
+      author: userName,
       url,
       likes,
-      user: user.id
+      user: userId
     })
     const savedBlog = await blog.save()
-    user.blogs.push(savedBlog.id)
-    await user.save()
+    request.user.blogs.push(savedBlog.id)
+    await request.user.save()
 
     response.status(201).send(savedBlog)
   } catch(error) {
@@ -45,7 +49,7 @@ blogsRouter.delete('/:id', async (request, response) => {
       error: 'Blog not found'
     })
   }
-  if (!blogToRemove.user.toString() !== request.token.id) {
+  if (blogToRemove.user.toString() !== request.user._id.toString()) {
     return response.status(401).send({
       error: 'user unauthorized'
     })

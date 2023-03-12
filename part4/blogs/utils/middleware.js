@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
@@ -34,7 +35,7 @@ const errorHandler = (error, request, response, next) => {
 }
 
 const tokenExtractor = (request, _response, next) => {
-  const authorization = request.get('authorization').replace(/^'|'$/g, '')
+  const authorization = request.get('authorization')?.replace(/^'|'$/g, '')
   const authClean = authorization && authorization.startsWith('Bearer ')
     ? authorization.replace('Bearer ', '')
     : null
@@ -46,9 +47,19 @@ const tokenExtractor = (request, _response, next) => {
   next()
 }
 
+const userExtractor = async (request, _response, next) => {
+  const user = await User.findById(request.token.id)
+  if (!user) {
+    return response.status(404).json({ error: 'user not found' })
+  }
+  request.user = user
+  next()
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  tokenExtractor
+  tokenExtractor,
+  userExtractor
 }
