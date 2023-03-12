@@ -41,9 +41,32 @@ const newBlogWithoutUrl = {
   title: "Vitamin D",
 }
 
+let _login
+const getLogin = async (api) => {
+  if (!_login) {
+    const userData = {
+      username: 'harry.potter',
+      name: 'Harry Potter',
+      password: 'harry123_'
+    }
+    const user = await api.post('/api/users').send(userData)
+
+    const login = await api.post('/api/login').send({
+      username: userData.username,
+      password: userData.password
+    })
+    _login = {
+      ...user._body,
+      token: login._body.token
+    }
+  }
+  return _login
+}
+
 module.exports = {
   initialBlogs,
   newBlog,
   newBlogWithoutLikes,
-  newBlogWithoutUrl
+  newBlogWithoutUrl,
+  getLogin
 }

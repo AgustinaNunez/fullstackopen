@@ -3,42 +3,54 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blogs')
 const User = require('../models/user')
-const { initialBlogs, newBlog, newBlogWithoutLikes, newBlogWithoutUrl } = require('./blogs_helper')
+const {
+  initialBlogs,
+  newBlog,
+  newBlogWithoutLikes,
+  newBlogWithoutUrl,
+  getLogin
+} = require('./blogs_helper')
+
+jest.setTimeout(10000)
 
 const api = supertest(app)
 
-beforeEach(async () => {
+beforeAll(async () => {
   await Blog.deleteMany({})
   await User.deleteMany({})
-
-  const user = new User({
-    name: 'Harry',
-    username: 'harry',
-    passwordHash: 'harrypasswordhash'
-  })
-  await user.save()
+  const userLogged = await getLogin(api)
 
   for (const initBlog of initialBlogs) {
-    const blog = new Blog(initBlog)
-    await blog.save()
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
+      .send(initBlog)
   }
 })
 
 describe('get all blogs', () => {
   test('blogs are returned as json', async () => {
+    const userLogged = await getLogin(api)
     await api
       .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
   })
   
   test('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
+    const userLogged = await getLogin(api)
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
     expect(response.body).toHaveLength(initialBlogs.length)
   })
   
   test('all blogs have an id', async () => {
-    const response = await api.get('/api/blogs')
+    const userLogged = await getLogin(api)
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
   
     response.body.map(blog => {
       expect(blog.id).toBeDefined()
@@ -48,36 +60,32 @@ describe('get all blogs', () => {
 
 describe('create a new blog', () => {
   test('can create a new blog', async () => {
-    const user = await User.findOne({})
-
+    const userLogged = await getLogin(api)
     await api
       .post('/api/blogs')
-      .send({
-        ...newBlog,
-        userId: user._id
-      })
+      .set('Authorization', `Bearer ${userLogged.token}`)
+      .send(newBlog)
       .expect(201)
   
     const response = await api
       .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(200)
       
     expect(response.body).toHaveLength(initialBlogs.length + 1)
   })
   
   test('if likes property is missing, it will return 0 likes', async () => {
-    const user = await User.findOne({})
-
+    const userLogged = await getLogin(api)
     await api
       .post('/api/blogs')
-      .send({
-        ...newBlogWithoutLikes,
-        userId: user._id
-      })
+      .set('Authorization', `Bearer ${userLogged.token}`)
+      .send(newBlogWithoutLikes)
       .expect(201)
   
     const response = await api
       .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(200)
     
     const blog = response.body
@@ -86,8 +94,10 @@ describe('create a new blog', () => {
   })
   
   test('if url property is missing, it will return 400', async () => {
+    const userLogged = await getLogin(api)
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .send(newBlogWithoutUrl)
       .expect(400)
   })
@@ -95,30 +105,44 @@ describe('create a new blog', () => {
 
 describe('delete a blog', () => {
   test('can delete an existing blog by its id', async () => {
-    const responseBefore = await api.get('/api/blogs')
+    const userLogged = await getLogin(api)
+
+    const responseBefore = await api
+      .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
     const blog = responseBefore.body[0]
     
     await api
       .delete('/api/blogs/' + blog.id)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(204)
   
-    const responseAfter = await api.get('/api/blogs')
-    expect(responseAfter.body).toHaveLength(initialBlogs.length - 1)
+    const responseAfter = await api
+      .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
+    expect(responseAfter.body).toHaveLength(responseBefore.body.length - 1)
   })
 })
 
 describe('update a blog', () => {
   test('can update an existing blog by its id', async () => {
-    const newLikes = 18
-    const responseBefore = await api.get('/api/blogs')
+    const userLogged = await getLogin(api)
+    
+    const responseBefore = await api
+      .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
     const blog = responseBefore.body[0]
+    const newLikes = 18
     
     await api
       .put('/api/blogs/' + blog.id)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .send({ likes: newLikes })
       .expect(200)
   
-    const responseAfter = await api.get('/api/blogs')
+    const responseAfter = await api
+      .get('/api/blogs')
+      .set('Authorization', `Bearer ${userLogged.token}`)
     expect(responseAfter.body[0].likes).toBe(newLikes)
   })
 })
