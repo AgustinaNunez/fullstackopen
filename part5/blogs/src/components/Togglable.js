@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Togglable = ({
   showButtonLabel = 'show',
@@ -17,6 +18,12 @@ const Togglable = ({
       </button>
     </div>
   )
+}
+
+Togglable.propTypes = {
+  showButtonLabel: PropTypes.string,
+  hideButtonLabel: PropTypes.string,
+  children: PropTypes.element.isRequired,
 }
 
 export default Togglable
