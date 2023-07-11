@@ -37,7 +37,7 @@ const App = () => {
       <div>
         <h2>log in to application</h2>
         <Notification {...notification} />
-        <LoginForm 
+        <LoginForm
           setUser={setUser}
           setNotification={setNotification}
           clearNotification={clearNotification}

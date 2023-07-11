@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({blog}) => {
+const Blog = ({ blog }) => {
   const [visible, setVisible] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -28,8 +28,8 @@ const Blog = ({blog}) => {
   }
 
   const isBlogAddedByTheUser = () => {
-    const userLogged = JSON.parse(localStorage.getItem('user'))?.username
-    return blog.user.some(u => u.username === userLogged)
+    const userLogged = JSON.parse(localStorage.getItem('user'))
+    return blog.user.some(u => u.username === userLogged?.username)
   }
 
   return (
@@ -41,13 +41,13 @@ const Blog = ({blog}) => {
           <p>likes {likes} <button onClick={likeBlog}>like</button></p>
           <p>{blog.author}</p>
           {isBlogAddedByTheUser() &&
-            <button style={{color: 'tomato', border: '1px solid tomato'}} onClick={removeBlog}>
+            <button style={{ color: 'tomato', border: '1px solid tomato' }} onClick={removeBlog}>
               remove
             </button>
           }
         </>
       }
-    </div>  
+    </div>
   )
 }
 

@@ -19,12 +19,12 @@ const BlogForm = ({
         url,
       })
       const message = `a new blog '${title}' by ${author} added`
-      setNotification({message})
+      setNotification({ message })
       setTitle('')
       setAuthor('')
       setUrl('')
     } catch (error) {
-      setNotification({message: 'Wrong credentials', type: 'error'})
+      setNotification({ message: 'Wrong credentials', type: 'error' })
       clearNotification()
     }
   }
@@ -33,7 +33,7 @@ const BlogForm = ({
     <form onSubmit={onSubmit}>
       <div>
         title
-          <input
+        <input
           type="text"
           value={title}
           name="title"
@@ -42,7 +42,7 @@ const BlogForm = ({
       </div>
       <div>
         author
-          <input
+        <input
           type="text"
           value={author}
           name="author"
@@ -51,7 +51,7 @@ const BlogForm = ({
       </div>
       <div>
         url
-          <input
+        <input
           type="text"
           value={url}
           name="url"

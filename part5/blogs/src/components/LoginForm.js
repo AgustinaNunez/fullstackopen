@@ -11,7 +11,6 @@ const LoginForm = ({
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
     try {
       const user = await loginService.login({
         username, password,
@@ -21,7 +20,7 @@ const LoginForm = ({
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setNotification({message: 'wrong username or password', type: 'error'})
+      setNotification({ message: 'wrong username or password', type: 'error' })
       clearNotification()
     }
   }
@@ -29,7 +28,7 @@ const LoginForm = ({
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="Username"
@@ -38,7 +37,7 @@ const LoginForm = ({
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
