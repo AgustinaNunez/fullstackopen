@@ -12,12 +12,14 @@ const App = () => {
   const [notification, setNotification] = useState(null)
 
   useEffect(() => {
-    if (user) {
+    const userStr = localStorage.getItem('user')
+    if (userStr) {
+      setUser(JSON.parse(userStr))
       blogService.getAll().then(blogs =>
         setBlogs( blogs )
       )
     }
-  }, [user])
+  }, [])
 
   const handleLogout = () => {
     setUser(null)
