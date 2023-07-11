@@ -34,5 +34,12 @@ const update = async (blog) => {
   return response.data
 }
 
+const remove = async (id) => {
+  const headers = getHeaders()
+  const url = `${baseUrl}/${id}`
+  const response = await axios.delete(url, headers)
+  return response.data
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create, update }
+export default { getAll, create, update, remove }
