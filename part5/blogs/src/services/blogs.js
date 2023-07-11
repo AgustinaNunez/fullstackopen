@@ -15,17 +15,24 @@ const getHeaders = () => {
   }
 }
 
-const getAll = () => {
+const getAll = async () => {
   const headers = getHeaders()
-  const request = axios.get(baseUrl, headers)
-  return request.then(response => response.data)
+  const response = await axios.get(baseUrl, headers)
+  return response.data
 }
 
 const create = async (newBlog) => {
   const headers = getHeaders()
-  const request = await axios.post(baseUrl, newBlog, headers)
-  return request
+  const response = await axios.post(baseUrl, newBlog, headers)
+  return response.data
+}
+
+const update = async (blog) => {
+  const headers = getHeaders()
+  const url = `${baseUrl}/${blog.id}`
+  const response = await axios.put(url, blog, headers)
+  return response.data
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create }
+export default { getAll, create, update }
