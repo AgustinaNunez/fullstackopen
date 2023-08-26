@@ -38,4 +38,29 @@ describe('Blog app', function() {
       cy.get('.error').should('have.css', 'color', RED_COLOR)
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.get('#username').type('juanperez')
+      cy.get('#password').type('juanperezpassword')
+      cy.get('#login-button').click()
+    })
+
+    it('a blog can be created', function() {
+      cy.contains('new note').click()
+
+      const newBlog = {
+        title: 'Some cool blog',
+        author: 'Pablo Lopez',
+        url: '/pablo-lopez/some-cool-blog.html'
+      }
+      cy.get('#title').type(newBlog.title)
+      cy.get('#author').type(newBlog.author)
+      cy.get('#url').type(newBlog.url)
+      cy.get('#create-button').click()
+      
+      cy.contains(`a new blog '${newBlog.title}' by ${newBlog.author} added`)
+      cy.contains(newBlog.title)
+    })
+  })
 })

@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/blogs.js'
+const baseUrl = '/api/blogs'
 
 let headers = null
 const getHeaders = () => {

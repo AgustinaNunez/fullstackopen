@@ -19,7 +19,7 @@ const App = () => {
         setBlogs( blogs )
       )
     }
-  }, [])
+  }, setBlogs)
 
   const handleLogout = () => {
     setUser(null)
@@ -55,6 +55,8 @@ const App = () => {
       <Togglable showButtonLabel='new note' hideButtonLabel='hide'>
         <h2>create new</h2>
         <BlogForm
+          blogs={blogs}
+          setBlogs={setBlogs}
           setNotification={setNotification}
           clearNotification={clearNotification}
         />

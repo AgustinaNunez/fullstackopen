@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import blogService from '../services/blogs.js'
 
 const BlogForm = ({
+  blogs,
+  setBlogs,
   setNotification,
   clearNotification,
 }) => {
@@ -14,13 +16,15 @@ const BlogForm = ({
     event.preventDefault()
 
     try {
-      await blogService.create({
+      const newBlog = await blogService.create({
         title,
         author,
         url,
       })
       const message = `a new blog '${title}' by ${author} added`
       setNotification({ message })
+      clearNotification()
+      setBlogs([...blogs, newBlog])
       setTitle('')
       setAuthor('')
       setUrl('')
@@ -37,6 +41,7 @@ const BlogForm = ({
         <input
           type="text"
           value={title}
+          id="title"
           name="title"
           onChange={({ target }) => setTitle(target.value)}
         />
@@ -46,6 +51,7 @@ const BlogForm = ({
         <input
           type="text"
           value={author}
+          id="author"
           name="author"
           onChange={({ target }) => setAuthor(target.value)}
         />
@@ -55,11 +61,12 @@ const BlogForm = ({
         <input
           type="text"
           value={url}
+          id="url"
           name="url"
           onChange={({ target }) => setUrl(target.value)}
         />
       </div>
-      <button type="submit">create</button>
+      <button id="create-button" type="submit">create</button>
     </form>
   )
 }
