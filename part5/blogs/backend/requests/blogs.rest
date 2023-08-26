@@ -1,19 +1,19 @@
 ###
-GET http://localhost:3001/api/blogs
+GET http://localhost:3003/api/blogs
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhhcnJ5IiwiaWQiOiI2NDA4Nzg0ZTkxOTU4YjBiZTk3MzBlZjYiLCJpYXQiOjE2Nzg1OTI1OTcsImV4cCI6MTY3ODU5NjE5N30.usB-ai5vWH8TsovU7wXe2TG9vz0ZhZ-HXMljzzc_2ns
 
 ###
-POST http://localhost:3001/api/blogs
+POST http://localhost:3003/api/blogs
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhhcnJ5IiwiaWQiOiI2NDA4Nzg0ZTkxOTU4YjBiZTk3MzBlZjYiLCJpYXQiOjE2NzgzMjYxOTV9.jPBRox8nDmFTPYZtQ0D3xSA_zEPdIT5SgHQfi6PjJ2M
 
 {
     "title": "Harry New Blog",
-    "url": "http://localhost:3001/api/blogs/123457",
+    "url": "http://localhost:3003/api/blogs/123457",
     "likes": 931
 }
 
 ###
-DELETE http://localhost:3001/api/blogs/640d1c9821834dab374be8ad
+DELETE http://localhost:3003/api/blogs/640d1c9821834dab374be8ad
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvbiIsImlkIjoiNjQwZDFkNjJiMTgzNTYzMTJmZDdmN2MxIiwiaWF0IjoxNjc4NTgxMTEwLCJleHAiOjE2Nzg1ODQ3MTB9.aSnXQMKLhtcmfU-6TKPIBZ6G8QEZ8SWTl-4H3CG423E
