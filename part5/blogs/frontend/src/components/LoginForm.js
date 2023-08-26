@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-import loginService from '../services/login'
+import loginService from '../services/login.js'
 
 const LoginForm = ({
   setUser,

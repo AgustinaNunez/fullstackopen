@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-import blogService from '../services/blogs'
+import blogService from '../services/blogs.js'
 
 const BlogForm = ({
   setNotification,
