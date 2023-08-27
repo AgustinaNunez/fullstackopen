@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 import blogService from '../services/blogs.js'
 
 const BlogForm = ({
-  blogs,
-  setBlogs,
   setNotification,
   clearNotification,
 }) => {
@@ -16,7 +14,7 @@ const BlogForm = ({
     event.preventDefault()
 
     try {
-      const newBlog = await blogService.create({
+      await blogService.create({
         title,
         author,
         url,
@@ -24,7 +22,6 @@ const BlogForm = ({
       const message = `a new blog '${title}' by ${author} added`
       setNotification({ message })
       clearNotification()
-      setBlogs([...blogs, newBlog])
       setTitle('')
       setAuthor('')
       setUrl('')

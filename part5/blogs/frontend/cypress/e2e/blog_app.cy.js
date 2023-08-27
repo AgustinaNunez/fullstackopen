@@ -1,14 +1,12 @@
-import { BACKEND_URL } from "../support/constants"
-
 describe('Blog app', function() {
   beforeEach(function() {
-    cy.request('POST', `${BACKEND_URL}/api/testing/reset`)
+    cy.request('POST', `${Cypress.env('BACKEND')}/api/testing/reset`)
     const user = {
       name: 'Juan Perez',
       username: 'juanperez',
       password: 'juanperezpassword'
     }
-    cy.request('POST', `${BACKEND_URL}/api/users/`, user) 
+    cy.request('POST', `${Cypress.env('BACKEND')}/api/users/`, user) 
     cy.visit('')
   })
 
@@ -79,6 +77,14 @@ describe('Blog app', function() {
         cy.get('#like-button').click()
         cy.contains('likes 1')
       })
+
+      it('it can be removed', function () {
+        cy.contains('view').click()
+        cy.get('#remove-button').click()
+        cy.on('window:confirm', () => true)
+      })
+
+
     })
   })
 })

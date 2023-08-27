@@ -14,6 +14,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "NODE_OPTIONS=--experimental-vm-modules react-scripts test ",
+    "test:e2e": "cypress run",
     "eject": "react-scripts eject",
     "eslint": "eslint .",
     "cypress:open": "cypress open"

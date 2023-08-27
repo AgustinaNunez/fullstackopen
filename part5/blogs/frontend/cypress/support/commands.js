@@ -1,7 +1,5 @@
-import { BACKEND_URL } from "./constants"
-
 Cypress.Commands.add('login', ({ username, password }) => {
-  cy.request('POST', `${BACKEND_URL}/api/login`, {
+  cy.request('POST', `${Cypress.env('BACKEND')}/api/login`, {
     username, password
   }).then(({ body }) => {
     localStorage.setItem('user', JSON.stringify(body))
@@ -11,7 +9,7 @@ Cypress.Commands.add('login', ({ username, password }) => {
 
 Cypress.Commands.add('createBlog', ({ title, author, url }) => {
   cy.request({
-    url: `${BACKEND_URL}/api/blogs`,
+    url: `${Cypress.env('BACKEND')}/api/blogs`,
     method: 'POST',
     body: { title, author, url },
     headers: {

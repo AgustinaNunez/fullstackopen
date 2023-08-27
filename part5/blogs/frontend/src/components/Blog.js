@@ -42,7 +42,7 @@ const Blog = ({ blog }) => {
           <p>likes {likes} <button id="like-button" onClick={likeBlog}>like</button></p>
           <p>{blog.author}</p>
           {isBlogAddedByTheUser() &&
-            <button style={{ color: 'tomato', border: '1px solid tomato' }} onClick={removeBlog}>
+            <button id="remove-button" style={{ color: 'tomato', border: '1px solid tomato' }} onClick={removeBlog}>
               remove
             </button>
           }
