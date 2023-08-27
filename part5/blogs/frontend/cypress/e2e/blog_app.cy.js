@@ -1,4 +1,4 @@
-import { BACKEND_URL, FRONTEND_URL } from "../support/constants"
+import { BACKEND_URL } from "../support/constants"
 
 describe('Blog app', function() {
   beforeEach(function() {
@@ -9,7 +9,7 @@ describe('Blog app', function() {
       password: 'juanperezpassword'
     }
     cy.request('POST', `${BACKEND_URL}/api/users/`, user) 
-    cy.visit(FRONTEND_URL)
+    cy.visit('')
   })
 
   it('Login form is shown', function() {

@@ -1,11 +1,11 @@
-import { BACKEND_URL, FRONTEND_URL } from "./constants"
+import { BACKEND_URL } from "./constants"
 
 Cypress.Commands.add('login', ({ username, password }) => {
   cy.request('POST', `${BACKEND_URL}/api/login`, {
     username, password
   }).then(({ body }) => {
     localStorage.setItem('user', JSON.stringify(body))
-    cy.visit(FRONTEND_URL)
+    cy.visit('')
   })
 })
 
@@ -19,5 +19,5 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
     }
   })
 
-  cy.visit(FRONTEND_URL)
+  cy.visit('')
 })
