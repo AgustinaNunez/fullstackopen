@@ -1,7 +1,7 @@
+import { BACKEND_URL, FRONTEND_URL } from "../support/constants"
+
 describe('Blog app', function() {
   beforeEach(function() {
-    const BACKEND_URL = 'http://localhost:3003'
-    const FRONTEND_URL = 'http://localhost:3000'
     cy.request('POST', `${BACKEND_URL}/api/testing/reset`)
     const user = {
       name: 'Juan Perez',
@@ -41,9 +41,10 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.get('#username').type('juanperez')
-      cy.get('#password').type('juanperezpassword')
-      cy.get('#login-button').click()
+      cy.login({
+        username: 'juanperez',
+        password: 'juanperezpassword'
+      })
     })
 
     it('a blog can be created', function() {
@@ -61,6 +62,23 @@ describe('Blog app', function() {
       
       cy.contains(`a new blog '${newBlog.title}' by ${newBlog.author} added`)
       cy.contains(newBlog.title)
+    })
+
+    describe('and a blog exists', function() {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'Another cool blog',
+          author: 'María Lopez',
+          url: '/maria-lopez/another-cool-blog.html'
+        })
+      })
+
+      it('it can be liked', function () {
+        cy.contains('view').click()
+        cy.contains('likes 0')
+        cy.get('#like-button').click()
+        cy.contains('likes 1')
+      })
     })
   })
 })
