@@ -1,12 +1,20 @@
 describe('Blog app', function() {
-  beforeEach(function() {
-    cy.request('POST', `${Cypress.env('BACKEND')}/api/testing/reset`)
-    const user = {
+  const users = [
+    {
       name: 'Juan Perez',
       username: 'juanperez',
       password: 'juanperezpassword'
+    },
+    {
+      name: 'María Lopez',
+      username: 'marialopez',
+      password: 'marialopezpassword'
     }
-    cy.request('POST', `${Cypress.env('BACKEND')}/api/users/`, user) 
+  ]
+  beforeEach(function() {
+    cy.request('POST', `${Cypress.env('BACKEND')}/api/testing/reset`)
+    cy.request('POST', `${Cypress.env('BACKEND')}/api/users/`, users[0])
+    cy.request('POST', `${Cypress.env('BACKEND')}/api/users/`, users[1]) 
     cy.visit('')
   })
 
@@ -19,15 +27,15 @@ describe('Blog app', function() {
 
   describe('Login',function() {
     it('succeeds with correct credentials', function() {
-      cy.get('#username').type('juanperez')
-      cy.get('#password').type('juanperezpassword')
+      cy.get('#username').type(users[0].username)
+      cy.get('#password').type(users[0].password)
       cy.get('#login-button').click()
 
       cy.contains('Juan Perez logged in')
     })
 
     it('fails with wrong credentials', function() {
-      cy.get('#username').type('juanperez')
+      cy.get('#username').type(users[0].username)
       cy.get('#password').type('juanperezwrongpass')
       cy.get('#login-button').click()
 
@@ -39,10 +47,7 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.login({
-        username: 'juanperez',
-        password: 'juanperezpassword'
-      })
+      cy.login({...users[0]})
     })
 
     it('a blog can be created', function() {
@@ -50,7 +55,7 @@ describe('Blog app', function() {
 
       const newBlog = {
         title: 'Some cool blog',
-        author: 'Pablo Lopez',
+        author: 'Anonymus',
         url: '/pablo-lopez/some-cool-blog.html'
       }
       cy.get('#title').type(newBlog.title)
@@ -66,8 +71,7 @@ describe('Blog app', function() {
       beforeEach(function () {
         cy.createBlog({
           title: 'Another cool blog',
-          author: 'María Lopez',
-          url: '/maria-lopez/another-cool-blog.html'
+          url: '/anonymus/another-cool-blog.html'
         })
       })
 
@@ -84,7 +88,25 @@ describe('Blog app', function() {
         cy.on('window:confirm', () => true)
       })
 
+      describe('when other user is logged in', function() {
+        beforeEach(function() {
+          cy.contains('logout').click()
+          
+          cy.get('#username').type(users[1].username)
+          cy.get('#password').type(users[1].password)
+          cy.get('#login-button').click()
+          cy.contains('María Lopez logged in')
+    
+          cy.login({...users[1]})
+        })
 
+        it('only the creator can see the delete button of a blog', function() {
+          cy.get('.blog')
+            .contains('view').click()
+            .not(users[1].name)
+            .not('remove')
+        })
+      })
     })
   })
 })
