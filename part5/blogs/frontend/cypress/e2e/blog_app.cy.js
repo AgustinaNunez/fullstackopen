@@ -68,11 +68,22 @@ describe('Blog app', function() {
     })
 
     describe('and a blog exists', function() {
-      beforeEach(function () {
-        cy.createBlog({
+      const blogs = [
+        {
           title: 'Another cool blog',
           url: '/anonymus/another-cool-blog.html'
-        })
+        },
+        {
+          title: 'Blog number one',
+          url: '/anonymus/blog-number-one.html'
+        },
+        {
+          title: 'Blog number two',
+          url: '/anonymus/blog-number-two.html'
+        }
+      ]
+      beforeEach(function () {
+        cy.createBlog({...blogs[0]})
       })
 
       it('it can be liked', function () {
@@ -105,6 +116,24 @@ describe('Blog app', function() {
             .contains('view').click()
             .not(users[1].name)
             .not('remove')
+        })
+      })
+
+      describe('when is a list of blogs', function() {
+        beforeEach(function () {
+          cy.login({...users[0]})
+          cy.createBlog({...blogs[1]})
+          cy.createBlog({...blogs[2]})
+        })
+
+        it('blogs are ordered according to likes', function() {
+          cy.get('.blog').eq(2).contains('view').click()
+          cy.get('.blog').eq(2).get('#like-button').click()
+          cy.get('.blog').eq(2).contains('hide').click()
+          cy.visit('')
+          cy.get('.blog').eq(0).should('contain', blogs[2].title)
+          cy.get('.blog').eq(1).should('contain', blogs[0].title)
+          cy.get('.blog').eq(2).should('contain', blogs[1].title)
         })
       })
     })
