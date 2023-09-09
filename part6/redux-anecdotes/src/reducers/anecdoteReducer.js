@@ -21,17 +21,22 @@ const sortPerVotes = (anecdotes) => (
   anecdotes.sort((a,b) => b.votes - a.votes)
 )
 
+const ACTION = {
+  ADD_ANECDOTE: 'ADD_ANECDOTE',
+  VOTE: 'VOTE',
+}
+
 const initialState = sortPerVotes(anecdotesAtStart.map(asObject))
 
 export const createAnecdote = (content) => ({
-  type: 'ADD_ANECDOTE',
+  type: ACTION.ADD_ANECDOTE,
   payload: {
     content
   }
 })
 
 export const voteAnecdote = (id) => ({
-  type: 'VOTE',
+  type: ACTION.VOTE,
   payload: {
     id
   }
@@ -39,7 +44,7 @@ export const voteAnecdote = (id) => ({
 
 const reducer = (state = initialState, action) => {
   switch(action.type) {
-    case 'VOTE':
+    case ACTION.VOTE:
       const id = action?.payload?.id
       return sortPerVotes(state.map(anecdote => {
         if (anecdote.id === id) {
@@ -50,7 +55,7 @@ const reducer = (state = initialState, action) => {
         }
         return anecdote
       }))
-    case 'ADD_ANECDOTE':
+    case ACTION.ADD_ANECDOTE:
       return [
         ...state,
         {
