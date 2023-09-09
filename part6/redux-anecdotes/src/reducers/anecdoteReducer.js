@@ -23,6 +23,20 @@ const sortPerVotes = (anecdotes) => (
 
 const initialState = sortPerVotes(anecdotesAtStart.map(asObject))
 
+export const createAnecdote = (content) => ({
+  type: 'ADD_ANECDOTE',
+  payload: {
+    content
+  }
+})
+
+export const voteAnecdote = (id) => ({
+  type: 'VOTE',
+  payload: {
+    id
+  }
+})
+
 const reducer = (state = initialState, action) => {
   switch(action.type) {
     case 'VOTE':

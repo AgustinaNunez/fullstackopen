@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { anecdoteAction } from './actions/anecdoteAction'
+import {
+  voteAnecdote as voteAnecdoteAction,
+  createAnecdote as createAnecdoteAction,
+} from './reducers/anecdoteReducer'
 
 const App = () => {
   const [content, setContent] = useState('')
@@ -8,12 +11,12 @@ const App = () => {
   const dispatch = useDispatch()
 
   const vote = (id) => {
-    dispatch(anecdoteAction.voteAnecdote(id))
+    dispatch(voteAnecdoteAction(id))
   }
 
   const createAnecdote = (event) => {
     event.preventDefault()
-    dispatch(anecdoteAction.createAnecdote(content))
+    dispatch(createAnecdoteAction(content))
   }
 
   return (
