@@ -16,10 +16,9 @@ const anecdoteSlice = createSlice({
     },
     voteAnecdote(state, action) {
       return state.map(anecdote => {
-        if (anecdote.id === action.payload) {
+        if (anecdote.id === action.payload.id) {
           return {
-            ...anecdote,
-            votes: anecdote.votes + 1
+            ...action.payload
           }
         }
         return anecdote
@@ -39,6 +38,16 @@ export const createAnecdote = (content) => {
   return async (dispatch) => {
     const anecdote = await anecdoteService.addAnecdote(content)
     dispatch(addAnecdote(anecdote))
+  }
+}
+
+export const updateVoteAnecdote = (anecdote) => {
+  return async (dispatch) => {
+    const updatedAnecdote = await anecdoteService.updateAnecdote(anecdote.id, {
+      ...anecdote,
+      votes: anecdote.votes + 1
+    })
+    dispatch(voteAnecdote(updatedAnecdote))
   }
 }
 
