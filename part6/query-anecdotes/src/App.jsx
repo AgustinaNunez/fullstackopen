@@ -1,19 +1,27 @@
+import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { anecdoteService } from './services/anecdotes'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
 const App = () => {
+  const [anecdotes, setAnecdotes] = useState([])
+
+  const anecdotesQuery = useQuery({
+    queryKey: ['anecdotes'],
+    queryFn: anecdoteService.getAll,
+    retry: 1,
+  })
+
+  useEffect(() => {
+    if (anecdotesQuery.data) {
+      setAnecdotes(anecdotesQuery.data)
+    }
+  }, [anecdotesQuery])
 
   const handleVote = (anecdote) => {
     console.log('vote')
   }
-
-  const anecdotes = [
-    {
-      "content": "If it hurts, do it more often",
-      "id": "47145",
-      "votes": 0
-    },
-  ]
 
   return (
     <div>
