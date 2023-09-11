@@ -10,6 +10,9 @@ const getAll = async () => {
 }
 
 const create = async (anecdote) => {
+  if (anecdote?.content?.length < 5) {
+    throw new Error('Too short anecdote, must have length 5 or more')
+  }
   const response = await axios.post(BASE_URL, {
     ...anecdote,
     id: generateId(),
