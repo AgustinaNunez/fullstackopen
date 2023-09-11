@@ -3,10 +3,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { anecdoteService } from './services/anecdotes'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
+import { NotificationType, useNotificationDispatch } from './contexts/NotificationContext'
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([])
   const queryClient = useQueryClient()
+  const dispatchNotification = useNotificationDispatch()
   
   const updateAnecdoteMutation = useMutation(anecdoteService.update, {
     onSuccess: () => {
@@ -30,6 +32,10 @@ const App = () => {
     updateAnecdoteMutation.mutate({
       ...anecdote,
       votes: anecdote.votes + 1,
+    })
+    dispatchNotification({
+      type: NotificationType.SET_NOTIFICATION, 
+      payload: `You voted '${anecdote.content}'`,
     })
   }
 
