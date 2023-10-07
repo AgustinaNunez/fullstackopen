@@ -9,7 +9,6 @@ import Togglable from './components/Togglable'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     const userStr = localStorage.getItem('user')
@@ -26,22 +25,12 @@ const App = () => {
     localStorage.removeItem('user')
   }
 
-  const clearNotification = () => {
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
-  }
-
   if (!user) {
     return (
       <div>
         <h2>log in to application</h2>
-        <Notification {...notification} />
-        <LoginForm
-          setUser={setUser}
-          setNotification={setNotification}
-          clearNotification={clearNotification}
-        />
+        <Notification />
+        <LoginForm setUser={setUser}/>
       </div>
     )
   }
@@ -49,7 +38,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification {...notification} />
+      <Notification />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
 
       <Togglable showButtonLabel='new note' hideButtonLabel='hide'>
@@ -57,8 +46,6 @@ const App = () => {
         <BlogForm
           blogs={blogs}
           setBlogs={setBlogs}
-          setNotification={setNotification}
-          clearNotification={clearNotification}
         />
       </Togglable>
 

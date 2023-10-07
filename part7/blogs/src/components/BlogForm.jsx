@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
+import { setNotification } from '../reducers/notificationReducer.js'
 import blogService from '../services/blogs.js'
 
-const BlogForm = ({
-  setNotification,
-  clearNotification,
-}) => {
+const BlogForm = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+
+  const dispatch = useDispatch()
 
   const onSubmit = async (event) => {
     event.preventDefault()
@@ -20,14 +20,12 @@ const BlogForm = ({
         url,
       })
       const message = `a new blog '${title}' by ${author} added`
-      setNotification({ message })
-      clearNotification()
+      dispatch(setNotification({ message }))
       setTitle('')
       setAuthor('')
       setUrl('')
     } catch (error) {
-      setNotification({ message: 'Wrong credentials', type: 'error' })
-      clearNotification()
+      dispatch(setNotification({ message: 'Wrong credentials', type: 'error' }))
     }
   }
 
@@ -66,11 +64,6 @@ const BlogForm = ({
       <button id="create-button" type="submit">create</button>
     </form>
   )
-}
-
-BlogForm.propTypes = {
-  setNotification: PropTypes.func.isRequired,
-  clearNotification: PropTypes.func.isRequired,
 }
 
 export default BlogForm
