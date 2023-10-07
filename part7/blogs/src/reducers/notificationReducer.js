@@ -11,8 +11,8 @@ const notificationSlice = createSlice({
     },
     clearNotification(status, action) {
       return initialState
-    }
-  }
+    },
+  },
 })
 
 export const setNotification = (notification, timeoutInSeconds = 3) => {

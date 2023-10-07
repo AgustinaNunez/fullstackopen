@@ -22,7 +22,7 @@ const App = () => {
         dispatch(setBlogs(blogs))
       )
     }
-  }, [])
+  }, [blogs])
 
   const handleLogout = () => {
     setUser(null)

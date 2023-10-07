@@ -6,7 +6,7 @@ const store = configureStore({
   reducer: {
     notification: notificationReducer,
     blogs: blogsReducer,
-  }
+  },
 })
 
 export default store
