@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
@@ -7,17 +7,18 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import { setBlogs } from './reducers/blogsReducer'
+import { login, logout } from './reducers/userReducer'
 
 const App = () => {
-  const [user, setUser] = useState(null)
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
     const userStr = localStorage.getItem('user')
     if (userStr) {
-      setUser(JSON.parse(userStr))
+      dispatch(login(JSON.parse(userStr)))
       blogService.getAll().then(blogs =>
         dispatch(setBlogs(blogs))
       )
@@ -25,7 +26,7 @@ const App = () => {
   }, [blogs])
 
   const handleLogout = () => {
-    setUser(null)
+    dispatch(logout())
     localStorage.removeItem('user')
   }
 
@@ -34,7 +35,7 @@ const App = () => {
       <div>
         <h2>log in to application</h2>
         <Notification />
-        <LoginForm setUser={setUser}/>
+        <LoginForm />
       </div>
     )
   }
