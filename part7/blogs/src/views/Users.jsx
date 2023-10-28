@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { Link } from 'react-router-dom'
 import { initializeUsers } from "../reducers/usersReducer"
 
 const Users = () => {
@@ -21,7 +22,7 @@ const Users = () => {
         <>
           {users?.map(user =>
             <div key={user.username} style={{display: 'flex', gap: '1em', alignItems: 'center'}}>
-              <div>{user.name}</div>
+              <Link to={`/users/${user.id}`}>{user.name}</Link>
               <div>{user.blogs.length}</div>
             </div>
           )}

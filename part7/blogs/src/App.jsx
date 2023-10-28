@@ -9,6 +9,7 @@ import { initializeBlogs } from './reducers/blogsReducer'
 import { login, logout } from './reducers/userReducer'
 import { Routes, Route } from 'react-router-dom'
 import Users from './views/Users'
+import User from './views/User'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
@@ -59,6 +60,7 @@ const App = () => {
 
       <Routes>
         <Route path='/users' element={<Users />} />
+        <Route path='/users/:id' element={<User />} />
       </Routes>
     </div>
   )
