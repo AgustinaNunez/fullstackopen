@@ -5,14 +5,13 @@ import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
-import { initializeBlogs } from './reducers/blogsReducer'
 import { login, logout } from './reducers/userReducer'
 import { Routes, Route } from 'react-router-dom'
 import Users from './views/Users'
 import User from './views/User'
+import Blogs from './views/Blogs'
 
 const App = () => {
-  const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
 
   const dispatch = useDispatch()
@@ -21,7 +20,6 @@ const App = () => {
     const userStr = localStorage.getItem('user')
     if (userStr) {
       dispatch(login(JSON.parse(userStr)))
-      dispatch(initializeBlogs(blogs))
     }
   }, [])
 
@@ -53,12 +51,9 @@ const App = () => {
         </>
       </Togglable>
 
-      <br/>
-      {[...blogs].sort((a,b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-
       <Routes>
+        <Route path='/' element={<Blogs />} />
+        <Route path='/blogs/:id' element={<Blog />} />
         <Route path='/users' element={<Users />} />
         <Route path='/users/:id' element={<User />} />
       </Routes>

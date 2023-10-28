@@ -1,22 +1,21 @@
-import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import PropTypes from 'prop-types'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useMatch } from 'react-router-dom'
 import blogService from '../services/blogs.js'
 import { deleteBlog, updateBlog } from '../reducers/blogsReducer.js'
 
-const Blog = ({ blog }) => {
-  const [visible, setVisible] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
+const Blog = () => {
+  const blogId = useMatch('/blogs/:id').params.id
+  const blogs = useSelector(state => state.blogs)
+  const [blog, setBlog] = useState()
+  const [likes, setLikes] = useState(blog?.likes)
 
   const dispatch = useDispatch()
 
-  const blogStyle = {
-    padding: 10,
-    border: '1px solid black',
-    marginBottom: 5
-  }
-
-  const toggleVisibility = () => setVisible(!visible)
+  useEffect(() => {
+    const blogFounded = blogs.find(blog => blog.id === blogId)
+    if (blogFounded) setBlog(blogFounded)
+  }, [])
 
   const likeBlog = async () => {
     const updatedBlog = {
@@ -40,27 +39,21 @@ const Blog = ({ blog }) => {
     return blog.user.some(u => u.username === userLogged?.username)
   }
 
-  return (
-    <div className='blog' style={blogStyle}>
-      {blog.title} <button onClick={toggleVisibility}>{visible ? 'hide': 'view'}</button>
-      {visible &&
-        <>
-          <p>{blog.url}</p>
-          <p>likes {likes} <button id="like-button" onClick={likeBlog}>like</button></p>
-          <p>{blog.author}</p>
-          {isBlogAddedByTheUser() &&
-            <button id="remove-button" style={{ color: 'tomato', border: '1px solid tomato' }} onClick={removeBlog}>
-              remove
-            </button>
-          }
-        </>
-      }
-    </div>
-  )
-}
+  if (!blog) return
 
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
+  return (
+    <>
+      <h1>{blog.title}</h1>
+      <p>{blog.url}</p>
+      <p>likes {likes} <button onClick={likeBlog}>like</button></p>
+      <p>{blog.author}</p>
+      {isBlogAddedByTheUser() &&
+        <button style={{ color: 'tomato', border: '1px solid tomato' }} onClick={removeBlog}>
+          remove
+        </button>
+      }
+    </>
+  )
 }
 
 export default Blog
