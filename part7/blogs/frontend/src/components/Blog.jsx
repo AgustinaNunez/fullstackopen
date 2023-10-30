@@ -8,7 +8,7 @@ const Blog = () => {
   const blogId = useMatch('/blogs/:id').params.id
   const blogs = useSelector(state => state.blogs)
   const [blog, setBlog] = useState()
-  const [likes, setLikes] = useState(blog?.likes)
+  const [likes, setLikes] = useState(blog?.likes || 0)
 
   const dispatch = useDispatch()
 
@@ -50,7 +50,7 @@ const Blog = () => {
     <>
       <h1>{blog.title}</h1>
       <p>{blog.url}</p>
-      <p>likes {likes} <button onClick={likeBlog}>like</button></p>
+      <p>{likes} likes <button onClick={likeBlog}>like</button></p>
       <p>{blog.author}</p>
       {isBlogAddedByTheUser() &&
         <button style={removeButtonStyles} onClick={removeBlog}>
