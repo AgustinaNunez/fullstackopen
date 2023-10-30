@@ -52,6 +52,10 @@ const Blog = () => {
           remove
         </button>
       }
+      <h2>comments</h2>
+      <ul>
+        {blog.comments.map(comment => <li key={Math.random()}>{comment}</li>)}
+      </ul>
     </>
   )
 }
