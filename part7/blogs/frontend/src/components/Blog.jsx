@@ -39,6 +39,11 @@ const Blog = () => {
     return blog.user.some(u => u.username === userLogged?.username)
   }
 
+  const removeButtonStyles = {
+    color: 'tomato',
+    border: '1px solid tomato',
+  }
+
   if (!blog) return
 
   return (
@@ -48,14 +53,19 @@ const Blog = () => {
       <p>likes {likes} <button onClick={likeBlog}>like</button></p>
       <p>{blog.author}</p>
       {isBlogAddedByTheUser() &&
-        <button style={{ color: 'tomato', border: '1px solid tomato' }} onClick={removeBlog}>
+        <button style={removeButtonStyles} onClick={removeBlog}>
           remove
         </button>
       }
       <h2>comments</h2>
-      <ul>
-        {blog.comments.map(comment => <li key={Math.random()}>{comment}</li>)}
-      </ul>
+      {
+        blog.comments.length > 0
+          ? <ul>
+              {blog.comments.map(comment => <li key={Math.random()}>{comment}</li>)}
+            </ul>
+          : <p style={{background: '#EBEBEB', padding: '1em'}}>no comments</p>
+      }
+      
     </>
   )
 }
