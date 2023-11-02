@@ -4,12 +4,13 @@
   "description": "This part of the course is about GraphQL, Facebook's alternative to REST for communication between browser and server.",
   "main": "index.js",
   "scripts": {
-    "server": "node index.js"
+    "server": "nodemon index.js"
   },
   "author": "Agustina Nuñez",
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.9.5",
-    "graphql": "^16.8.1"
+    "graphql": "^16.8.1",
+    "nodemon": "^3.0.1"
   }
 }
