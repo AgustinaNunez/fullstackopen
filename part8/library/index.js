@@ -118,6 +118,12 @@ const typeDefs = `
   type Query {
     allAuthors(author: String): [Author!]!
   }
+  type Mutation {
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): Author
+  }
 `
 
 const resolvers = {
@@ -156,6 +162,14 @@ const resolvers = {
       })
       return book
     },
+    editAuthor: (root, args) => {
+      const { name, setBornTo } = args
+      const authorFounded = authors.find(author => author.name === name) || null
+      if (authorFounded) {
+        authorFounded.born = setBornTo
+      }
+      return { name, born: setBornTo }
+    }
   }
 }
 
