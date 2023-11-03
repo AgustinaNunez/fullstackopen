@@ -1,10 +1,16 @@
 import { useMutation } from "@apollo/client"
 import { useEffect, useState } from "react"
+import Select from 'react-select'
 import { EDIT_AUTHOR, QUERY_ALL_AUTHORS } from "../graphql"
 
-const EditAuthor = () => {
+const EditAuthor = ({authors}) => {
   const [born, setBorn] = useState('')
-  const [name, setName] = useState('')
+  const [name, setName] = useState(null)
+
+  const nameOptions = authors.map(author => ({
+    label: author.name,
+    value: author.name
+  }))
 
   const [editAuthor, result] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [  {query: QUERY_ALL_AUTHORS } ],
@@ -30,7 +36,7 @@ const EditAuthor = () => {
       }
     })
     
-    setName('')
+    setName(null)
     setBorn('')
   }
 
@@ -40,9 +46,10 @@ const EditAuthor = () => {
       <form onSubmit={submit}>
         <div>
           name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
+          <Select
+            defaultValue={name}
+            onChange={({ value }) => setName(value)}
+            options={nameOptions}
           />
         </div>
         <div>

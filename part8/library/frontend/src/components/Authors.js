@@ -29,7 +29,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <EditAuthor />
+      <EditAuthor authors={authors} />
     </div>
   )
 }
