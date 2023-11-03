@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import EditAuthor from './EditAuthor'
 import { QUERY_ALL_AUTHORS } from '../graphql'
 
 const Authors = (props) => {
@@ -28,6 +29,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <EditAuthor />
     </div>
   )
 }
