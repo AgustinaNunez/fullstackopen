@@ -38,10 +38,22 @@ const resolvers = {
         }
       }))
       return authors
-    }
+    },
+    me: (root, args, context) => {
+      return context.currentUser
+    },
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      const currentUser = context.currentUser
+      if (!currentUser) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+
       const {title, published, author: authorName, genres} = args
       let author = await Author.findOne({ name: authorName })
       if (!author) {
@@ -71,7 +83,16 @@ const resolvers = {
         })
       }
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      const currentUser = context.currentUser
+      if (!currentUser) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+
       const { name, setBornTo } = args
       try {
         const authorUpdated = await Author.findOneAndUpdate(
