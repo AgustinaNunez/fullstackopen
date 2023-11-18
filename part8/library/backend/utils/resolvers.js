@@ -1,3 +1,4 @@
+const { GraphQLError } = require('graphql')
 const Book = require('../models/Book')
 const Author = require('../models/Author')
 
@@ -46,26 +47,46 @@ const resolvers = {
         await author.save()
       }
       if (!author?._id) throw new Error('Could not create new author')
-      const newBook = new Book({
-        title,
-        published,
-        author: author._id,
-        genres,
-      })
-      const bookSaved = await newBook.save()
-      const book = await Book
-        .findOne({_id: bookSaved._id})
-        .populate('author', {name: 1, born: 1})
-      return book
+      try {
+        const newBook = new Book({
+          title,
+          published,
+          author: author._id,
+          genres,
+        })
+        const bookSaved = await newBook.save()
+        const book = await Book
+          .findOne({_id: bookSaved._id})
+          .populate('author', {name: 1, born: 1})
+        return book
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
     },
     editAuthor: async (root, args) => {
       const { name, setBornTo } = args
-      const authorUpdated = await Author.findOneAndUpdate(
-        { name },
-        { born: setBornTo },
-        { new: true }
-      )
-      return authorUpdated
+      try {
+        const authorUpdated = await Author.findOneAndUpdate(
+          { name },
+          { born: setBornTo },
+          { new: true }
+        )
+        return authorUpdated
+      } catch (error) {
+        throw new GraphQLError('Saving author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
     }
   }
 }
