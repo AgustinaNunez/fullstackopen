@@ -1,6 +1,7 @@
 const { ApolloServer } = require('apollo-server-express')
 const mongoose = require('mongoose')
 const express = require('express')
+const cors = require('cors')
 const typeDefs = require('./utils/schema')
 const resolvers = require('./utils/resolvers')
 const config = require('./utils/config')
@@ -16,6 +17,7 @@ const startServer = async () => {
   }
 
   const app = express()
+  app.use(cors())
   await server.start()
   server.applyMiddleware({ app })
 
