@@ -1,7 +1,9 @@
 import { useQuery } from "@apollo/client"
 import { QUERY_ALL_BOOKS } from "../graphql"
+import { useState } from "react"
 
 const Books = (props) => {
+  const [genre, setGenre] = useState(null)
   const result = useQuery(QUERY_ALL_BOOKS)
   const books = result.loading ? [] : result.data?.allBooks
 
@@ -9,10 +11,22 @@ const Books = (props) => {
     return null
   }
 
+  const getGenres = () => books
+    .map(book => book.genres)
+    .flat()
+    .filter((value, i, self) => self.indexOf(value) === i)
+
   return (
     <div>
-      <h2>books</h2>
-
+      <p style={{display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0}}>
+        <h2>books</h2>{genre && <p>(in genre <b>{genre}</b>)</p>}
+      </p> 
+      {getGenres().map(genre =>
+        <button key={genre} onClick={() => setGenre(genre)}>
+          {genre}
+        </button>
+      )}
+      <button onClick={() => setGenre(null)}>all genres</button>
       {books?.length
         ? <table>
           <tbody>
@@ -21,13 +35,16 @@ const Books = (props) => {
               <th>author</th>
               <th>published</th>
             </tr>
-            {books.map((b) => (
-              <tr key={b.title}>
-                <td>{b.title}</td>
-                <td>{b.author.name}</td>
-                <td>{b.published}</td>
-              </tr>
-            ))}
+            {books
+              .filter(b => genre ? b.genres.includes(genre) : true)
+              .map((b) => (
+                <tr key={b.title}>
+                  <td>{b.title}</td>
+                  <td>{b.author.name}</td>
+                  <td>{b.published}</td>
+                </tr>
+              ))
+            }
           </tbody>
         </table>
         : <p>No books founded</p>
