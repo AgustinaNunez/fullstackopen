@@ -6,6 +6,7 @@ import { EDIT_AUTHOR, QUERY_ALL_AUTHORS } from "../graphql"
 const EditAuthor = ({authors}) => {
   const [born, setBorn] = useState('')
   const [name, setName] = useState(null)
+  const token = localStorage.getItem('token')
 
   const nameOptions = authors.map(author => ({
     label: author.name,
@@ -39,6 +40,8 @@ const EditAuthor = ({authors}) => {
     setName(null)
     setBorn('')
   }
+
+  if (!token) return null
 
   return (
     <>
