@@ -14,7 +14,14 @@ const NewBook = (props) => {
     onError: (error) => {
       const messages = error.graphQLErrors.map(e => e.message).join('\n')
       console.log(messages)
-    }
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: QUERY_ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        }
+      })
+    },
   })
 
   if (!props.show) {
