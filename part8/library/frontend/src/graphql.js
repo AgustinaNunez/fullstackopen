@@ -7,7 +7,14 @@ export const LOGIN = gql`
     }
   }
 `
-
+export const QUERY_ME = gql`
+  query Me {
+    me {
+      username
+      favoriteGenre
+    }
+  }
+`
 export const QUERY_ALL_AUTHORS = gql`
   query($authorName: String) {
     allAuthors(author: $authorName) {

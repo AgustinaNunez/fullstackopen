@@ -18,9 +18,9 @@ const Books = (props) => {
 
   return (
     <div>
-      <p style={{display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0}}>
+      <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0}}>
         <h2>books</h2>{genre && <p>(in genre <b>{genre}</b>)</p>}
-      </p> 
+      </div> 
       {getGenres().map(genre =>
         <button key={genre} onClick={() => setGenre(genre)}>
           {genre}

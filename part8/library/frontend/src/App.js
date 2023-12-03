@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import Recommendations from './components/Recomendations'
 import { useApolloClient, useMutation } from '@apollo/client'
 import { LOGIN } from './graphql'
 
@@ -39,23 +40,33 @@ const App = () => {
     setPage('authors')
   }
 
+  const PAGE = {
+    AUTHORS: 'authors',
+    BOOKS: 'books',
+    ADD: 'add',
+    RECOMMENDATIONS: 'recommendations',
+    LOGIN: 'login',
+  }
+
   return (
     <div>
       <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
+        <button onClick={() => setPage(PAGE.AUTHORS)}>authors</button>
+        <button onClick={() => setPage(PAGE.BOOKS)}>books</button>
         {token
           ? <>
-              <button onClick={() => setPage('add')}>add book</button>
+              <button onClick={() => setPage(PAGE.ADD)}>add book</button>
+              <button onClick={() => setPage(PAGE.RECOMMENDATIONS)}>recommendations</button>
               <button onClick={onLogout}>logout</button>
             </>
           : <button onClick={() => setPage('login')}>login</button>
         }
       </div>
 
-      <Authors show={page === 'authors'} />
-      <Books show={page === 'books'} />
-      <NewBook show={page === 'add'} />
+      <Authors show={page === PAGE.AUTHORS} />
+      <Books show={page === PAGE.BOOKS} />
+      <NewBook show={page === PAGE.ADD} />
+      <Recommendations show={page === PAGE.RECOMMENDATIONS} />
       {page === 'login' &&
         <form onSubmit={onLogin}>
           <div>
