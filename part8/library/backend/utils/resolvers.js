@@ -1,8 +1,11 @@
 const { GraphQLError } = require('graphql')
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
 const jwt = require('jsonwebtoken')
 const Book = require('../models/Book')
 const Author = require('../models/Author')
 const User = require('../models/User')
+const { SUBSCRIPTION, GRAPHQL_ERROR } = require('./constants')
 
 const resolvers = {
   Query: {
@@ -49,7 +52,7 @@ const resolvers = {
       if (!currentUser) {
         throw new GraphQLError('User not authenticated', {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: GRAPHQL_ERROR.BAD_USER_INPUT,
           }
         })
       }
@@ -72,11 +75,14 @@ const resolvers = {
         const book = await Book
           .findOne({_id: bookSaved._id})
           .populate('author', {name: 1, born: 1})
+
+        pubsub.publish(SUBSCRIPTION.BOOK_ADDED, { bookAdded: book })
+        
         return book
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: GRAPHQL_ERROR.BAD_USER_INPUT,
             invalidArgs: args.name,
             error
           }
@@ -88,7 +94,7 @@ const resolvers = {
       if (!currentUser) {
         throw new GraphQLError('User not authenticated', {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: GRAPHQL_ERROR.BAD_USER_INPUT,
           }
         })
       }
@@ -104,7 +110,7 @@ const resolvers = {
       } catch (error) {
         throw new GraphQLError('Saving author failed', {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: GRAPHQL_ERROR.BAD_USER_INPUT,
             invalidArgs: args.name,
             error
           }
@@ -118,7 +124,7 @@ const resolvers = {
         .catch(error => {
           throw new GraphQLError('Creating the user failed', {
             extensions: {
-              code: 'BAD_USER_INPUT',
+              code: GRAPHQL_ERROR.BAD_USER_INPUT,
               invalidArgs: username,
               error
             }
@@ -131,7 +137,7 @@ const resolvers = {
       if (!user || password !== 'secret') {
         throw new GraphQLError('Wrong credentials', {
           extensions: {
-            code: 'BAD_USER_INPUT'
+            code: GRAPHQL_ERROR.BAD_USER_INPUT
           }
         })        
       }
@@ -144,7 +150,12 @@ const resolvers = {
         value: jwt.sign(userForToken, process.env.JWT_SECRET)
       }
     },
-  }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(SUBSCRIPTION.BOOK_ADDED)
+    },
+  },
 }
 
 module.exports = resolvers
