@@ -3,8 +3,8 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Recommendations from './components/Recomendations'
-import { useApolloClient, useMutation } from '@apollo/client'
-import { LOGIN } from './graphql'
+import { useApolloClient, useMutation, useSubscription } from '@apollo/client'
+import { BOOK_ADDED, LOGIN } from './graphql'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -12,6 +12,13 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const {title, author} = data.data.bookAdded
+      window.alert(`New book '${title}' from '${author.name}' added!`)
+    }
+  })
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
