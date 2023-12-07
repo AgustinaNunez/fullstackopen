@@ -1,16 +1,26 @@
-import { useQuery } from "@apollo/client"
-import { QUERY_ALL_BOOKS } from "../graphql"
+import { useQuery, useSubscription } from "@apollo/client"
+import { BOOK_ADDED, QUERY_ALL_BOOKS } from "../graphql"
 import { useState } from "react"
 
 const Books = (props) => {
   const [genre, setGenre] = useState(null)
-  const resultFiltered = useQuery(QUERY_ALL_BOOKS, {
+  const {
+    loading: loadingFiltered,
+    data: dataFiltered,
+    refetch: refetchFiltered,
+  } = useQuery(QUERY_ALL_BOOKS, {
     variables: { genre }
   })
-  const booksFiltered = resultFiltered.loading ? [] : resultFiltered.data?.allBooks
+  const booksFiltered = loadingFiltered ? [] : dataFiltered?.allBooks
 
-  const result = useQuery(QUERY_ALL_BOOKS)
-  const allBooks = result.loading ? [] : result.data?.allBooks
+  const {loading, data, refetch} = useQuery(QUERY_ALL_BOOKS)
+  const allBooks = loading ? [] : data?.allBooks
+
+  const { data: newBookData } = useSubscription(BOOK_ADDED);
+  if (newBookData) {
+    refetchFiltered()
+    refetch()
+  }
   
   if (!props.show) {
     return null

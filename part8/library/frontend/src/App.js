@@ -4,7 +4,22 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Recommendations from './components/Recomendations'
 import { useApolloClient, useMutation, useSubscription } from '@apollo/client'
-import { BOOK_ADDED, LOGIN } from './graphql'
+import { BOOK_ADDED, LOGIN, QUERY_ALL_BOOKS } from './graphql'
+
+export const updateCache = (cache, query, bookAdded) => {
+  const uniqByTitle = (a) => {
+    const seen = new Set()
+    return a.filter((item) => {
+      const k = item.title
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByTitle(allBooks.concat(bookAdded)),
+    }
+  })
+}
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -15,9 +30,10 @@ const App = () => {
 
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
-      const {title, author} = data.data.bookAdded
-      window.alert(`New book '${title}' from '${author.name}' added!`)
-    }
+      const { bookAdded } = data.data
+      window.alert(`New book '${bookAdded.title}' from '${bookAdded.author.name}' added!`)
+      updateCache(client.cache, { query: QUERY_ALL_BOOKS }, bookAdded)
+    },
   })
 
   const [login, result] = useMutation(LOGIN, {
@@ -26,6 +42,13 @@ const App = () => {
     }
   })
   
+  useEffect(() => {
+    const localToken = localStorage.getItem('token')
+    if (localToken) {
+      setToken(localToken)
+    }
+  }, [])
+
   useEffect(() => {
     if (result.data) {
       const token = result.data.login.value
