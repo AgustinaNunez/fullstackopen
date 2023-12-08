@@ -1,3 +1,5 @@
+import { ERROR } from "../constants"
+
 interface ExerciseResults {
   periodLength: number,
   trainingDays: number,
@@ -39,17 +41,17 @@ const calculateExercises = (target: number, hours: number[]): ExerciseResults =>
 
 const parseHoursArgs = (args: string[]) => {
   const params = args.slice(2)
-  if (params.length < 2) throw new Error('Not enough arguments')
+  if (params.length < 2) throw new Error(ERROR.NOT_ENOUGH_ARGUMENTS)
 
   const target = Number(params[0])
   if (isNaN(target)) {
-    throw new Error('Provide valid number for target')
+    throw new Error(`${ERROR.PROVIDE_VALID_NUMBERS_FOR} target`)
   }
 
   const hours = params.slice(1).map(arg => Number(arg))
   const validHours = hours.every(hour => !isNaN(hour))
   if (!validHours) {
-    throw new Error('Provide valid numbers for daily exercise hours')
+    throw new Error(`${ERROR.PROVIDE_VALID_NUMBERS_FOR} daily exercise hours`)
   }
 
   return { target, hours }

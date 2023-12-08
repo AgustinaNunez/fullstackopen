@@ -1,3 +1,5 @@
+import { ERROR } from "../constants"
+
 const calculateBmi = (height: number, weight: number) => {
   const bmi = weight / Math.pow(height, 2)
   
@@ -13,15 +15,15 @@ const calculateBmi = (height: number, weight: number) => {
 }
 
 const parseBmiArgs = (args: string[]) => {
-  if (args.length < 4) throw new Error('Not enough arguments')
-  if (args.length > 4) throw new Error('Too many arguments')
+  if (args.length < 4) throw new Error(ERROR.NOT_ENOUGH_ARGUMENTS)
+  if (args.length > 4) throw new Error(ERROR.TOO_MANY_ARGUMENTS)
 
   const height = Number(args[2])
   const weight = Number(args[3])
   if (height > 0 && weight > 0) {
     return { height, weight }
   }
-  throw new Error('Provide valid numbers for height and weight')
+  throw new Error(`${ERROR.PROVIDE_VALID_NUMBERS_FOR} height and weight`)
 }
 
 try {
