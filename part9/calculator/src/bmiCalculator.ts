@@ -1,4 +1,5 @@
 import { ERROR } from "../constants";
+import { getErrorMessage } from "../utils";
 
 export const calculateBmi = (height: number, weight: number) => {
   const bmi = weight / Math.pow(height, 2);
@@ -31,8 +32,5 @@ try {
   const bmi = calculateBmi(height, weight);
   console.log(bmi);
 } catch(error) {
-  const message = (error instanceof Error)
-      ? error.message
-      : 'Unknown error';
-  console.error(`Error: ${message}.`);
+  console.error(`Error: ${getErrorMessage(error)}.`);
 }

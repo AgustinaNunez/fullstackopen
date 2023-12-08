@@ -1,8 +1,11 @@
 import express from 'express';
-import { calculateBmi } from './src/bmiCalculator';
-import { isInvalidNumber } from './utils';
-import { ERROR } from './constants';
 const app = express();
+import { calculateBmi } from './src/bmiCalculator';
+import { getErrorMessage, isInvalidNumber } from './utils';
+import { ERROR } from './constants';
+import { calculateExercises } from './src/exerciseCalculator';
+
+app.use(express.json());
 
 app.get('/hello', (_req, res) => {
   res.send('Hello Full Stack!');
@@ -24,10 +27,30 @@ app.get('/bmi', (req, res) => {
       bmi: calculateBmi(height, weight)
     });
   } catch(error) {
-    const message = (error instanceof Error)
-      ? error.message
-      : 'Unknown error';
-    return res.status(500).json({message});
+    return res.status(500).json({ error: getErrorMessage(error) });
+  }
+});
+app.get('/exercises', (req, res) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const {
+      target: targetParam,
+      daily_exercises: hoursParam
+    } = req.body;
+    if (!Array.isArray(hoursParam)) {
+      return res.status(400).send({ error: `${ERROR.PROVIDE_VALID_NUMBERS_FOR} hours`});
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const hours = hoursParam.map(h => Number(h));
+    const isInvalidHours = hours.some((h: number) => isNaN(h));
+    
+    if (isInvalidNumber(targetParam) || isInvalidHours) {
+      return res.status(400).send({ error: `${ERROR.PROVIDE_VALID_NUMBERS_FOR} target and hours`});
+    }
+    const target = Number(targetParam);
+    return res.status(200).json(calculateExercises(target, hours));
+  } catch(error) {
+    return res.status(500).json({ error: getErrorMessage(error) });
   }
 });
 

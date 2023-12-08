@@ -1,4 +1,5 @@
 import { ERROR } from "../constants";
+import { getErrorMessage } from "../utils";
 
 interface ExerciseResults {
   periodLength: number,
@@ -16,7 +17,7 @@ const RATING = {
   GREAT: { description: 'great!', score: 3 }
 };
 
-const calculateExercises = (target: number, hours: number[]): ExerciseResults => {
+export const calculateExercises = (target: number, hours: number[]): ExerciseResults => {
   const periodLength = hours.length;
   const trainingDays = hours.filter(dailyHours => dailyHours > 0).length;
   const totalHours = hours.reduce((sum, value) => sum += value);
@@ -62,8 +63,5 @@ try {
   const result = calculateExercises(target, hours);
   console.log(result);
 } catch(error) {
-  const message = (error instanceof Error)
-      ? error.message
-      : 'Unknown error';
-  console.error(`Error: ${message}.`);
+  console.error(`Error: ${getErrorMessage(error)}.`);
 }

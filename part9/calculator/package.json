@@ -7,7 +7,7 @@
     "calculateBmi": "ts-node src/bmiCalculator.ts",
     "calculateExercises": "ts-node src/exerciseCalculator.ts",
     "start": "ts-node index.ts",
-    "dev": "ts-node-dev index.ts",
+    "dev": "ts-node-dev --inspect=0.0.0.0:9201 index.ts",
     "lint": "eslint --ext .ts ."
   },
   "author": "Agustina Nuñez",
