@@ -31,15 +31,13 @@ const resolvers = {
       if (authorName) {
         filter.name = authorName
       }
-      let authors = await Author.find(filter)
-      authors = await Promise.all(authors.map(async author => {
-        const authorBooks = await Book.find({author: author._id})
-        return {
-          ...author.toJSON(),
-          bookCount: authorBooks.length
-        }
+      const authors = await Author
+        .find(filter)
+        .populate('books')
+      return authors.map(author => ({
+        ...author.toJSON(),
+        bookCount: author.books.length,
       }))
-      return authors
     },
   },
   Mutation: {

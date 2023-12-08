@@ -61,11 +61,11 @@ const resolvers = {
       }
 
       const {title, published, author: authorName, genres} = args
-      let author = await Author.findOne({ name: authorName })
-      if (!author) {
-        author = new Author({ name: authorName })
-        await author.save()
-      }
+      const author = await Author.findOneAndUpdate(
+        { name: authorName },
+        { $setOnInsert: { name: authorName } },
+        { new: true, upsert: true }
+      )
       if (!author?._id) throw new Error('Could not create new author')
       try {
         const newBook = new Book({
@@ -75,6 +75,9 @@ const resolvers = {
           genres,
         })
         const bookSaved = await newBook.save()
+        author.books.push(bookSaved._id)
+        await author.save()
+        
         const book = await Book
           .findOne({_id: bookSaved._id})
           .populate('author', {name: 1, born: 1})
