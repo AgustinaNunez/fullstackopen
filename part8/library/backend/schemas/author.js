@@ -1,7 +1,6 @@
 const { GraphQLError } = require('graphql')
 
 const Author = require('../models/Author')
-const Book = require('../models/Book')
 const { GRAPHQL_ERROR } = require('../utils/constants')
 
 const typeDefs = `
