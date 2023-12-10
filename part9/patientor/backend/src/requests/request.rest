@@ -9,3 +9,15 @@ Content-Type: application/json
 ###
 GET http://localhost:3001/api/patients
 Content-Type: application/json
+
+###
+POST http://localhost:3001/api/patients
+Content-Type: application/json
+
+{
+  "name": "Juan Lopez",
+  "dateOfBirth": "1999-01-30",
+  "ssn": "299179-77Z",
+  "gender": "male",
+  "occupation": "QA"
+}

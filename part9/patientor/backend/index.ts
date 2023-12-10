@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 
-import diagnoseRouter from './routes/diagnose';
-import patientRouter from './routes/patient';
+import diagnoseRouter from './src/routes/diagnose';
+import patientRouter from './src/routes/patient';
 
 const app = express();
 app.use(cors());
