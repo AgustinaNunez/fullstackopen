@@ -1,20 +1,42 @@
-import { Course } from "../types"
+import { CourseKind, CoursePart } from "../types"
 
 interface ContentProps {
-  courses: Course[]
+  courseParts: CoursePart[]
 }
-const Content = ({courses}: ContentProps) => {
+const Content = ({courseParts}: ContentProps) => {
+  const viewPart = (part: CoursePart) => {
+    switch(part.kind) {
+      case CourseKind.basic:
+        return <i>{part.description}</i>
+      case CourseKind.group:
+        return <p>Project exercises {part.groupProjectCount}</p>
+      case CourseKind.background:
+        return (
+          <>
+            <i>{part.description}</i>
+            <p>Submit to {part.backgroundMaterial}</p>
+          </>
+        )
+      case CourseKind.special:
+        return (
+          <>
+            <i>{part.description}</i>
+            <p>Required skills: {part.requirements.join(', ')}</p>
+          </>
+        )
+      default:
+        return null;
+    }
+  }
   return (
     <>
-      <p>
-        {courses[0].name} {courses[0].exerciseCount}
-      </p>
-      <p>
-        {courses[1].name} {courses[1].exerciseCount}
-      </p>
-      <p>
-        {courses[2].name} {courses[2].exerciseCount}
-      </p>
+      {courseParts.map(part => (
+        <div key={part.name}>
+          <h3>{part.name} {part.exerciseCount}</h3>
+          {viewPart(part)}
+        </div>
+        )
+      )}
     </>
   )
 }
