@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev index.ts",
+    "dev": "ts-node-dev --inspect=0.0.0.0:9202 index.ts",
     "lint": "eslint --ext .ts .",
     "start": "tsc && node build/index.js"
   },
