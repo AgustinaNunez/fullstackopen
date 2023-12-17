@@ -1,50 +1,66 @@
-
 import { NewDiaryEntry, Weather, Visibility } from './types';
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
 };
 
-const parseComment = (comment: unknown): string => {
+const parseComment = (comment: unknown): string|undefined => {
   if (!isString(comment)) {
-    throw new Error('Incorrect or missing comment');
+    return 'Incorrect or missing comment';
   }
-
-  return comment;
+  return undefined;
 };
 
 const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
 };
 
-const parseDate = (date: unknown): string => {
+const parseDate = (date: unknown): string|undefined => {
   if (!isString(date) || !isDate(date)) {
-      throw new Error('Incorrect date: ' + date);
+    return `Incorrect date: '${date}'`;
   }
-  return date;
+  return undefined;
 };
 
 const isWeather = (param: string): param is Weather => {
   return Object.values(Weather).map(v => v.toString()).includes(param);
 };
 
-const parseWeather = (weather: unknown): Weather => {
+const parseWeather = (weather: unknown): string|undefined => {
   if (!isString(weather) || !isWeather(weather)) {
-    throw new Error('Incorrect weather: ' + weather);
+    return `Incorrect weather: '${weather}'`;
   }
-  return weather;
+  return undefined;
 };
 
 const isVisibility = (param: string): param is Visibility => {
   return Object.values(Visibility).map(v => v.toString()).includes(param);
 };
 
-const parseVisibility = (visibility: unknown): Visibility => {
+const parseVisibility = (visibility: unknown): string|undefined => {
   if (!isString(visibility) || !isVisibility(visibility)) {
-      throw new Error('Incorrect visibility: ' + visibility);
+    return `Incorrect visibility: '${visibility}'`;
   }
-  return visibility;
+  return undefined;
 };
+
+const collectErrors = (object: NewDiaryEntry) => {
+  const errors: string[] = []
+  
+  const errorWeather = parseWeather(object.weather);
+  if (errorWeather) errors.push(errorWeather)
+
+  const errorVisibility = parseVisibility(object.visibility);
+  if (errorVisibility) errors.push(errorVisibility);
+
+  const errorDate = parseDate(object.date);
+  if (errorDate) errors.push(errorDate);
+
+  const errorComment = parseComment(object.comment);
+  if (errorComment) errors.push(errorComment);
+
+  return errors;
+}
 
 const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
   if ( !object || typeof object !== 'object' ) {
@@ -52,11 +68,15 @@ const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
   }
 
   if ('comment' in object && 'date' in object && 'weather' in object && 'visibility' in object)  {
+    const errors = collectErrors(object as NewDiaryEntry);
+    if (errors.length > 0) {
+      throw new Error(errors.join('. '))
+    }
     const newEntry: NewDiaryEntry = {
-      weather: parseWeather(object.weather),
-      visibility: parseVisibility(object.visibility),
-      date: parseDate(object.date),
-      comment: parseComment(object.comment)
+      weather: object.weather as Weather,
+      visibility: object.visibility as Visibility,
+      date: object.date as string,
+      comment: object.comment as string
     };
   
     return newEntry;

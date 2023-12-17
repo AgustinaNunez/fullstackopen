@@ -9,8 +9,16 @@ const getAll = async (): Promise<DiaryEntry[]> => {
 }
 
 const create = async (newDiaryEntry: NewDiaryEntry) => {
-  const response = await axios.post<DiaryEntry>(diaryUrl, newDiaryEntry)
-  return response.data
+  try {
+    const response = await axios.post<DiaryEntry>(diaryUrl, newDiaryEntry)
+    return response.data
+  } catch(error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message)
+    } else {
+      throw new Error('Unknown error')
+    }
+  }
 }
 
 export default {

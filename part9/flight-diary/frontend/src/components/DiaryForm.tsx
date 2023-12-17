@@ -12,6 +12,8 @@ const DiaryForm = ({diaryEntires, setDiaryEntries}: DiaryFormProps) => {
   const [visibility, setVisibility] = useState<string>('')
   const [comment, setComment] = useState<string>('')
 
+  const [notification, setNotification] = useState<string>('')
+
   const onNewDiaryEntry = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     const newDiaryEntry: NewDiaryEntry = {
@@ -20,8 +22,17 @@ const DiaryForm = ({diaryEntires, setDiaryEntries}: DiaryFormProps) => {
       visibility: visibility as Visibility,
       comment,
     }
-    const diaryEntry: DiaryEntry = await diaryService.create(newDiaryEntry)
-    setDiaryEntries(diaryEntires.concat(diaryEntry))
+    try {
+      const diaryEntry: DiaryEntry = await diaryService.create(newDiaryEntry)
+      setDiaryEntries(diaryEntires.concat(diaryEntry))
+    } catch(error) {
+      if (error && typeof error === 'object') {
+        setNotification(error.toString())
+      }
+      setTimeout(() => {
+        setNotification('')
+      }, 5000)
+    }
     setDate('')
     setWeather('')
     setVisibility('')
@@ -31,6 +42,7 @@ const DiaryForm = ({diaryEntires, setDiaryEntries}: DiaryFormProps) => {
   return (
     <form onSubmit={onNewDiaryEntry}>
       <h2>Add new</h2>
+      {notification && <p>{notification}</p>}
       <div>
         Date <input
           type='date'
