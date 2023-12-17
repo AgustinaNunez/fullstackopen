@@ -7,6 +7,10 @@ const router = express.Router();
 router.get('/', (_req, res) => {
   res.send(patientService.getAll());
 });
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+  res.send(patientService.getById(id));
+});
 router.post('/', (req, res) => {
   try {
     const newPatientData = toNewPatientData(req.body);
