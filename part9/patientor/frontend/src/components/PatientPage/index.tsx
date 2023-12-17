@@ -30,6 +30,15 @@ const PatientPage = () => {
       </Typography>
       <Typography variant="body1">ssh: {patient.ssn}</Typography>
       <Typography variant="body1">occupation: {patient.occupation}</Typography>
+      <Typography variant="h6">entries</Typography>
+      {patient.entries?.map(e => 
+        <Typography variant="body1">
+          {e.date} {e.description}
+          <ul>
+            {e.diagnosisCodes?.map(code => code && <li>{code}</li>)}
+          </ul>
+        </Typography>
+      )}
     </div>
   );
 };
