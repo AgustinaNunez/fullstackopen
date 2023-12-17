@@ -11,7 +11,7 @@ const getAll = (): NonSensitivePatient[] => {
   );
 };
 
-const getById = (id: string): NonSensitivePatient | undefined => {
+const getById = (id: string): Patient | undefined => {
   return patients.find(p => p.id === id);
 };
 

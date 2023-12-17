@@ -8,6 +8,11 @@ const getAll = async (): Promise<DiaryEntry[]> => {
   return response.data
 }
 
+const getById = async (id: string) => {
+  const response = await axios.get<DiaryEntry>(`${diaryUrl}/${id}`)
+  return response.data
+}
+
 const create = async (newDiaryEntry: NewDiaryEntry) => {
   try {
     const response = await axios.post<DiaryEntry>(diaryUrl, newDiaryEntry)
@@ -23,5 +28,6 @@ const create = async (newDiaryEntry: NewDiaryEntry) => {
 
 export default {
   getAll,
+  getById,
   create,
 }
