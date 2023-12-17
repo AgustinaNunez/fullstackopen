@@ -45,10 +45,10 @@ const parseVisibility = (visibility: unknown): string|undefined => {
 };
 
 const collectErrors = (object: NewDiaryEntry) => {
-  const errors: string[] = []
+  const errors: string[] = [];
   
   const errorWeather = parseWeather(object.weather);
-  if (errorWeather) errors.push(errorWeather)
+  if (errorWeather) errors.push(errorWeather);
 
   const errorVisibility = parseVisibility(object.visibility);
   if (errorVisibility) errors.push(errorVisibility);
@@ -60,7 +60,7 @@ const collectErrors = (object: NewDiaryEntry) => {
   if (errorComment) errors.push(errorComment);
 
   return errors;
-}
+};
 
 const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
   if ( !object || typeof object !== 'object' ) {
@@ -70,7 +70,7 @@ const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
   if ('comment' in object && 'date' in object && 'weather' in object && 'visibility' in object)  {
     const errors = collectErrors(object as NewDiaryEntry);
     if (errors.length > 0) {
-      throw new Error(errors.join('. '))
+      throw new Error(errors.join('. '));
     }
     const newEntry: NewDiaryEntry = {
       weather: object.weather as Weather,

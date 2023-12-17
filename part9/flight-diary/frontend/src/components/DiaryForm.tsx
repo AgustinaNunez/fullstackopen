@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { DiaryEntry, NewDiaryEntry, Visibility, Weather } from '../types'
 import diaryService from '../services/diary'
+import RadioOptions from './RadioOptions';
 
 type DiaryFormProps = {
   diaryEntires: DiaryEntry[];
@@ -51,24 +52,20 @@ const DiaryForm = ({diaryEntires, setDiaryEntries}: DiaryFormProps) => {
         />
       </div>
       <div>
-        Weather <select name='weather' onChange={({ target }) => {setWeather(target.value)}}>
-          <option>- Choose weather -</option>
-          {
-            Object.values(Weather).map(weather => 
-              <option key={weather} value={weather}>{weather}</option>
-            )
-          }
-        </select>
+        Weather <RadioOptions 
+          name='weather'
+          options={Object.values(Weather)}
+          selectedValue={weather} 
+          onChange={setWeather} 
+        />
       </div>
       <div>
-        Visibility <select name='visibility' onChange={({ target }) => {setVisibility(target.value)}}>
-          <option>- Choose visibility -</option>
-          {
-            Object.values(Visibility).map(visibility => 
-              <option key={visibility} value={visibility}>{visibility}</option>
-            )
-          }
-        </select>
+        Visibility <RadioOptions 
+          name='visibility' 
+          options={Object.values(Visibility)} 
+          selectedValue={visibility} 
+          onChange={setVisibility} 
+        />
       </div>
       <div>
         Comment <input
