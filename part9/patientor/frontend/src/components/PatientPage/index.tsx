@@ -10,6 +10,7 @@ import diagnosisService from '../../services/diagnosis';
 import EntryHealthCheck from "./EntryHealthCheck";
 import EntryHospital from "./EntryHospital";
 import EntryOccupationalHealthcare from "./EntryOccupationalHealthcare";
+import EntryForm from "../EntryForm";
 
 const PatientPage = () => {
   const { id } = useParams();
@@ -57,6 +58,7 @@ const PatientPage = () => {
       </Typography>
       <Typography variant="body1">ssh: {patient.ssn}</Typography>
       <Typography variant="body1">occupation: {patient.occupation}</Typography>
+      <EntryForm entries={patient.entries}/>
       <Typography variant="h6">entries</Typography>
       {patient.entries?.map(entry => 
         <div key={entry.id} style={entryStyles}>
