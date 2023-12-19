@@ -2,22 +2,28 @@ import { Button, SelectChangeEvent, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import diagnosisService from '../../services/diagnosis';
 import patientsService from '../../services/patients';
-import { Entry, EntryFormValues, EntryType } from "../../types";
+import { Entry, EntryFormValues, EntryType, HealthCheckRating } from "../../types";
 import { useParams } from "react-router-dom";
 import InputForm from "../BasicComponents/InputForm";
 import MultipleSelect from "../BasicComponents/MultipleSelect";
-import Notification from "../BasicComponents/Notification";
+import Notification, { NotificationProps } from "../BasicComponents/Notification";
+import SimpleSelect from "../BasicComponents/SimpleSelect";
 
 const EntryForm: React.FC<{entries: Entry[]}> = ({entries}) => {
   const { id } = useParams();
+  const [notification, setNotification] = useState<NotificationProps|null>(null);
 
   const [description, setDescription] = useState<string>('');
   const [specialist, setSpecialist] = useState<string>('');
   const [date, setDate] = useState<string>('');
-  const [healthCheckRating, setHealthCheckRating] = useState<number | null>(null);
+  const [healthCheckRating, setHealthCheckRating] = useState<string>('');
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 
   const [diagnosisCodesList, setDiagnosisCodesList] = useState<string[]>([]);
+  const healthCheckRatingList = Object.entries(HealthCheckRating)
+    .filter(([name, _value]) => isNaN(Number(name)))
+    .map(([name, value]) => ({ value: String(value), name })
+  );
 
   useEffect(() => {
     diagnosisService
@@ -39,28 +45,38 @@ const EntryForm: React.FC<{entries: Entry[]}> = ({entries}) => {
     setDescription('');
     setSpecialist('');
     setDiagnosisCodes([]);
-    setHealthCheckRating(null);
+    setHealthCheckRating('');
+  };
+
+  const notifyError = (message: string) => {
+    setNotification({type: 'error', message});
+    setTimeout(() => setNotification(null), 4000);
+  };
+
+  const notifySuccess = (message: string) => {
+    setNotification({type: 'success', message});
+    setTimeout(() => setNotification(null), 4000);
   };
 
   const onNewEntry = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    if (!healthCheckRating) return;
     const newEntry: EntryFormValues = {
       description,
       date,
       specialist,
       diagnosisCodes,
       type: EntryType.HealthCheck,
-      healthCheckRating
+      healthCheckRating: Number(healthCheckRating)
     };
     try {
       const entry: Entry = await patientsService.addEntry(id, newEntry);
       entries.push(entry);
+      notifySuccess('New entry added successfully');
     } catch(error) {
       if (error && typeof error === 'object') {
-        console.log(error.toString());
+        notifyError(error.toString());
       } else {
-        console.log(error);
+        notifyError(String(error));
       }
     }
     resetForm();
@@ -73,7 +89,7 @@ const EntryForm: React.FC<{entries: Entry[]}> = ({entries}) => {
   return (
     <div style={{border: '1px solid black', padding: '0.5rem', margin: '0.5rem 0', borderRadius: '0.5rem'}}>
       <Typography variant="h6">New HealthCheck entry</Typography>
-      <Notification type="error" message="mi mensaje" />
+      {notification && <Notification type={notification.type} message={notification.message} />}
       <form onSubmit={onNewEntry}>
         <InputForm
           placeholder="Description" 
@@ -97,10 +113,11 @@ const EntryForm: React.FC<{entries: Entry[]}> = ({entries}) => {
           onChange={onChangeDiagnosis}
           list={diagnosisCodesList}
         />
-        <InputForm
-          placeholder="Health check rating" 
-          value={healthCheckRating && healthCheckRating >= 0 ? String(healthCheckRating):''} 
-          onChange={({target}) => setHealthCheckRating(parseInt(target.value))} 
+        <SimpleSelect
+          value={healthCheckRating} 
+          placeholder="Health check rating"
+          onChange={({target}) => setHealthCheckRating(target.value)}
+          list={healthCheckRatingList}
         />
       </form>
       <div style={{display: 'flex', gap: '0.5rem', padding: '0.5rem 0'}}>

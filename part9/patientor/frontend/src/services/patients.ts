@@ -29,12 +29,19 @@ const create = async (object: PatientFormValues) => {
 };
 
 const addEntry = async (patientId: string|undefined, object: EntryFormValues) => {
-  const { data } = await axios.post<Entry>(
-    `${apiBaseUrl}/patients/${patientId}/entries`,
-    object
-  );
-
-  return data;
+  try {
+    const { data } = await axios.post<Entry>(
+      `${apiBaseUrl}/patients/${patientId}/entries`,
+      object
+    );
+    return data;
+  } catch(error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error('Unknown error');
+    }
+  }
 };
 
 export default {

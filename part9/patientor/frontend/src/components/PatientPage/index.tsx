@@ -65,7 +65,6 @@ const PatientPage = () => {
           {viewEntry(entry)}
         </div>
       )}
-      <Button variant="outlined" color="primary">Add new entry</Button>
     </div>
   );
 };

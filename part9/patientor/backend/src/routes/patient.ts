@@ -18,7 +18,7 @@ router.post('/:id/entries', (req, res) => {
     const entryAdded = patientService.addEntry(id, newEntry);
     return res.status(201).json(entryAdded);
   } catch(error) {
-    return res.status(400).send(getErrorMessage(error));
+    return res.status(400).json({message: getErrorMessage(error)});
   }
 });
 router.post('/', (req, res) => {

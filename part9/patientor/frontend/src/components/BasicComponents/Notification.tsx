@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert, AlertColor, AlertTitle } from "@mui/material";
 
-type NotificationProps = {
+export type NotificationProps = {
   type: AlertColor, 
   message: string
 };
