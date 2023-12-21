@@ -1,4 +1,5 @@
 import { FormControl, Input, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import styles from './styles';
 
 export type SimpleSelectOptionProp = { value: string; name: string };
 type SimpleSelectProps = {
@@ -12,7 +13,10 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({value, placeholder, onChange
     <Typography>{placeholder}</Typography>;
   
   return (
-    <FormControl sx={{ margin: '0.5rem 0', width: '100%'}}>
+    <FormControl sx={styles.formControl}>
+      <Typography variant="body1" sx={styles.label}>
+        {placeholder}
+      </Typography>
       <Select
         value={value}
         onChange={onChange}

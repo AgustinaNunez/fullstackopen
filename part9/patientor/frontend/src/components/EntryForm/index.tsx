@@ -1,144 +1,74 @@
-import { Button, SelectChangeEvent, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import diagnosisService from '../../services/diagnosis';
-import patientsService from '../../services/patients';
-import { Entry, EntryFormValues, EntryType, HealthCheckRating } from "../../types";
-import { useParams } from "react-router-dom";
-import InputForm from "../BasicComponents/InputForm";
-import MultipleSelect from "../BasicComponents/MultipleSelect";
-import Notification, { NotificationProps } from "../BasicComponents/Notification";
-import SimpleSelect from "../BasicComponents/SimpleSelect";
+import * as React from 'react';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import HealthCheckEntryForm from './HealthCheckEntryForm';
+import { Entry } from '../../types';
+import HospitalEntryForm from './HospitalEntryForm';
+import OccupationalHealthcareEntryForm from './OccupationalHealthcareEntryForm';
 
-const EntryForm: React.FC<{entries: Entry[]}> = ({entries}) => {
-  const { id } = useParams();
-  const [notification, setNotification] = useState<NotificationProps|null>(null);
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
 
-  const [description, setDescription] = useState<string>('');
-  const [specialist, setSpecialist] = useState<string>('');
-  const [date, setDate] = useState<string>('');
-  const [healthCheckRating, setHealthCheckRating] = useState<string>('');
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
-
-  const [diagnosisCodesList, setDiagnosisCodesList] = useState<string[]>([]);
-  const healthCheckRatingList = Object.entries(HealthCheckRating)
-    .filter(([name, _value]) => isNaN(Number(name)))
-    .map(([name, value]) => ({ value: String(value), name })
-  );
-
-  useEffect(() => {
-    diagnosisService
-      .getAll()
-      .then(data => setDiagnosisCodesList(data.map(d => d.code)));
-  }, []);
-
-  const onChangeDiagnosis = (event: SelectChangeEvent<typeof diagnosisCodes>) => {
-    const {
-      target: { value },
-    } = event;
-    setDiagnosisCodes(
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
-
-  const resetForm = () => {
-    setDate('');
-    setDescription('');
-    setSpecialist('');
-    setDiagnosisCodes([]);
-    setHealthCheckRating('');
-  };
-
-  const notifyError = (message: string) => {
-    setNotification({type: 'error', message});
-    setTimeout(() => setNotification(null), 4000);
-  };
-
-  const notifySuccess = (message: string) => {
-    setNotification({type: 'success', message});
-    setTimeout(() => setNotification(null), 4000);
-  };
-
-  const onNewEntry = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
-    const newEntry: EntryFormValues = {
-      description,
-      date,
-      specialist,
-      diagnosisCodes,
-      type: EntryType.HealthCheck,
-      healthCheckRating: Number(healthCheckRating)
-    };
-    try {
-      const entry: Entry = await patientsService.addEntry(id, newEntry);
-      entries.push(entry);
-      notifySuccess('New entry added successfully');
-    } catch(error) {
-      if (error && typeof error === 'object') {
-        notifyError(error.toString());
-      } else {
-        notifyError(String(error));
-      }
-    }
-    resetForm();
-  };
-
-  const onCancel = () => {
-    resetForm();
-  };
+const CustomTabPanel = (props: TabPanelProps) => {
+  const { children, value, index, ...other } = props;
 
   return (
-    <div style={{border: '1px solid black', padding: '0.5rem', margin: '0.5rem 0', borderRadius: '0.5rem'}}>
-      <Typography variant="h6">New HealthCheck entry</Typography>
-      {notification && <Notification type={notification.type} message={notification.message} />}
-      <form onSubmit={onNewEntry}>
-        <InputForm
-          placeholder="Description" 
-          value={description} 
-          onChange={({target}) => setDescription(target.value)} 
-        />
-        <InputForm 
-          placeholder="Date" 
-          value={date} 
-          type="date" 
-          onChange={({target}) => setDate(target.value)} 
-        />
-        <InputForm
-          placeholder="Specialist" 
-          value={specialist} 
-          onChange={({target}) => setSpecialist(target.value)} 
-        />
-        <MultipleSelect
-          value={diagnosisCodes} 
-          placeholder="Diagnosis code"
-          onChange={onChangeDiagnosis}
-          list={diagnosisCodesList}
-        />
-        <SimpleSelect
-          value={healthCheckRating} 
-          placeholder="Health check rating"
-          onChange={({target}) => setHealthCheckRating(target.value)}
-          list={healthCheckRatingList}
-        />
-      </form>
-      <div style={{display: 'flex', gap: '0.5rem', padding: '0.5rem 0'}}>
-        <Button 
-          variant="contained" 
-          color="error" 
-          sx={{width: '6rem'}} 
-          onClick={onCancel}
-        >
-          Cancel
-        </Button>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          sx={{width: '6rem'}} 
-          onClick={onNewEntry}
-        >
-          Add
-        </Button>
-      </div>
-    </div>  
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+};
+
+const a11yProps = (index: number) => {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+};
+
+const EntryForm: React.FC<{entries: Entry[]}> = ({entries}) => {
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  const tabs = [
+    {index: 0, label: 'Health Check', form: <HealthCheckEntryForm entries={entries} />},
+    {index: 1, label: 'Hospital', form: <HospitalEntryForm entries={entries} />},
+    {index: 2, label: 'Occupational Healthcare', form: <OccupationalHealthcareEntryForm entries={entries} />},
+  ];
+
+  return (
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          {tabs.map(tab => <Tab label={tab.label} {...a11yProps(tab.index)} />)}
+        </Tabs>
+      </Box>
+      {
+        tabs.map(tab => (
+          <CustomTabPanel value={value} index={tab.index}>
+            {tab.form}
+          </CustomTabPanel>
+        ))
+      }
+    </Box>
   );
 };
 

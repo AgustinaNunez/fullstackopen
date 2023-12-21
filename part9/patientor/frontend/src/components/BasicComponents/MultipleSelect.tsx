@@ -1,5 +1,13 @@
 import { ReactNode } from "react";
-import { FormControl, Input, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import {
+  FormControl,
+  Input,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
+import styles from './styles';
 
 type MultipleSelectProps = {
   value: string[], 
@@ -12,7 +20,10 @@ const MultipleSelect: React.FC<MultipleSelectProps> = ({value, placeholder, onCh
     <Typography>{placeholder}</Typography>;
   
   return (
-    <FormControl sx={{ margin: '0.5rem 0', width: '100%'}}>
+    <FormControl sx={styles.formControl}>
+      <Typography variant="body1" sx={styles.label}>
+        {placeholder}
+      </Typography>
       <Select
         multiple
         displayEmpty

@@ -33,12 +33,12 @@ export enum EntryType {
   HealthCheck = 'HealthCheck'
 }
 
-interface Discharge {
+export interface Discharge {
   date: string;
   criteria: string;
 }
 
-interface SickLeave {
+export interface SickLeave {
   startDate: string;
   endDate: string;
 }
