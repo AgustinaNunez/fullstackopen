@@ -8,7 +8,11 @@ const theme = {
     white: '#fff',
   },
   fonts: {
-    main: 'System',
+    main: {
+      android: 'Roboto',
+      ios: 'Arial',
+      default: 'System'
+    },
   },
   fontSizes: {
     title: 24,
