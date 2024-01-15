@@ -9,6 +9,7 @@ const AppBarTab = ({to, text}) => {
       flexGrow: 1,
       color: theme.colors.white,
       fontWeight: theme.fontWeights.bold,
+      paddingRight: 20,
     }
   });
 
