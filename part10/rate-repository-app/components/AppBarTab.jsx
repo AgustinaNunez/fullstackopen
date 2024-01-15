@@ -1,8 +1,9 @@
-import { Pressable, StyleSheet } from "react-native";
+import {StyleSheet} from "react-native";
 import Text from "./Text";
 import theme from "../theme";
+import {Link} from "react-router-native";
 
-const AppBarTab = ({onPress, text}) => {
+const AppBarTab = ({to, text}) => {
   const styles = StyleSheet.create({
     text: {
       flexGrow: 1,
@@ -12,9 +13,11 @@ const AppBarTab = ({onPress, text}) => {
   });
 
   return (
-    <Pressable onPress={onPress}>
-      <Text fontSize="title" style={styles.text}>{text}</Text>
-    </Pressable>
+    <Link to={to}>
+      <Text fontSize="title" style={styles.text}>
+        {text}
+      </Text>
+    </Link>
   )
 };
 

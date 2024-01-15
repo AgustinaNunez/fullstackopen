@@ -1,21 +1,10 @@
-import { StyleSheet, View } from 'react-native';
-import RepositoryList from './components/RepositoryList';
-import AppBar from './components/AppBar';
+import {NativeRouter} from 'react-router-native';
+import Main from "./components/Main";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <AppBar />
-      <RepositoryList />
-    </View>
+    <NativeRouter>
+      <Main />
+    </NativeRouter>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
