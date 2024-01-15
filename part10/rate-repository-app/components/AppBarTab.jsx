@@ -9,13 +9,14 @@ const AppBarTab = ({to, text}) => {
       flexGrow: 1,
       color: theme.colors.white,
       fontWeight: theme.fontWeights.bold,
+      fontSize: theme.fontSizes.heading,
       paddingRight: 20,
     }
   });
 
   return (
     <Link to={to}>
-      <Text fontSize="title" style={styles.text}>
+      <Text style={styles.text}>
         {text}
       </Text>
     </Link>

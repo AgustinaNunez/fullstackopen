@@ -1,10 +1,11 @@
 import { StyleSheet, View } from 'react-native';
 import Text from './Text';
+import theme from "../theme";
 
 const Pill = ({text}) => {
   const styles = StyleSheet.create({
     pill: {
-      backgroundColor: '#1E90FF',
+      backgroundColor: theme.colors.blue,
       paddingVertical: 5,
       paddingHorizontal: 10,
       borderRadius: 5,
