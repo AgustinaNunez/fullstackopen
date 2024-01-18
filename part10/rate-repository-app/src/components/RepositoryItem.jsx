@@ -49,9 +49,6 @@ const styles = StyleSheet.create({
   contentItem: {
     flexGrow: 1,
   },
-  cardHeaderText: {
-    flexGrow: 1,
-  },
   description: {
     flexWrap: 'wrap',
     width: '90%',
