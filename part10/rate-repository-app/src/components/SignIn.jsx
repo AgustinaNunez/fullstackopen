@@ -3,14 +3,25 @@ import {View, StyleSheet} from "react-native";
 import Button from "./Button";
 import {Formik} from "formik";
 import * as yup from 'yup';
+import useSignIn from '../../hooks/useSignIn';
+import AuthStorage from '../utils/authStorage';
 
 const SignIn = () => {
+  const [signIn] = useSignIn();
   const initialValues = {
     username: '',
     password: ''
   }
-  const onSubmit = (values) => {
-    console.log(values);
+
+  const onSubmit = async (values) => {
+    const {username, password} = values;
+    try {
+      const { user, accessToken } = await signIn({username, password});
+      const userLocalStorage = new AuthStorage(`auth-${user.id}`);
+      await userLocalStorage.setAccessToken(accessToken);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
