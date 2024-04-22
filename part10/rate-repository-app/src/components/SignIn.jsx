@@ -4,10 +4,11 @@ import Button from "./Button";
 import {Formik} from "formik";
 import * as yup from 'yup';
 import useSignIn from '../../hooks/useSignIn';
-import AuthStorage from '../utils/authStorage';
+import { useNavigate } from 'react-router-native';
 
 const SignIn = () => {
   const [signIn] = useSignIn();
+  const navigate = useNavigate();
   const initialValues = {
     username: '',
     password: ''
@@ -16,9 +17,10 @@ const SignIn = () => {
   const onSubmit = async (values) => {
     const {username, password} = values;
     try {
-      const { user, accessToken } = await signIn({username, password});
-      const userLocalStorage = new AuthStorage(`auth-${user.id}`);
-      await userLocalStorage.setAccessToken(accessToken);
+      const { accessToken } = await signIn({username, password});
+      if (accessToken) {
+        navigate('/');
+      }
     } catch (error) {
       console.log(error);
     }
