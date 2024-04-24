@@ -3,10 +3,7 @@ import theme from '../theme';
 import RepositoryItem from './RepositoryItem';
 import useRepositories from '../../hooks/useRepositories';
 
-const RepositoryList = () => {
-  const { repositories } = useRepositories();
-
-  // Get the nodes from the edges array
+export const RepositoryListContainer = ({ repositories }) => {
   const repositoryNodes = repositories
     ? repositories?.edges?.map(edge => edge.node)
     : [];
@@ -22,6 +19,12 @@ const RepositoryList = () => {
       ItemSeparatorComponent={ItemSeparator}
     />
   );
+};
+
+const RepositoryList = () => {
+  const { repositories } = useRepositories();
+
+  return <RepositoryListContainer repositories={repositories} />;
 }
 
 const styles = StyleSheet.create({
