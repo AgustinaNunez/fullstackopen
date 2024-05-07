@@ -8,7 +8,6 @@ import ReviewItem from './ReviewItem';
 
 export const ReviewListContainer = ({ reviews }) => {
   const list = reviews?.edges?.map(edge => edge.node) || []
-console.log('list', list)
   const ItemSeparator = () => <View style={styles.separator} />;
   return (
     <FlatList
