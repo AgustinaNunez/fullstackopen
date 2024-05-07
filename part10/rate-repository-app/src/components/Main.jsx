@@ -1,8 +1,9 @@
-import AppBar from "./AppBar";
-import {StyleSheet, View} from "react-native";
-import {Routes, Route, Navigate} from "react-router-native";
-import RepositoryList from "./RepositoryList";
-import SignIn from "./SignIn";
+import AppBar from './AppBar';
+import { StyleSheet, View } from 'react-native';
+import { Navigate, Route, Routes } from 'react-router-native';
+import RepositoryList from './RepositoryList';
+import SignIn from './SignIn';
+import RepositoryItem from './RepositoryItem';
 
 const Main = () => {
   return (
@@ -10,6 +11,7 @@ const Main = () => {
       <AppBar/>
       <Routes>
         <Route path="/" element={<RepositoryList />} />
+        <Route path="/:id" element={<RepositoryItem />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

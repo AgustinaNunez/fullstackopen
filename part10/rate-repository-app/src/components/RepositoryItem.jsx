@@ -1,63 +1,69 @@
-import { View, Image, StyleSheet } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { useParams } from 'react-router-native';
+import useRepository from '../../hooks/useRepository';
+import RepositoryInfo from './RepositoryInfo';
 import Text from './Text';
-import Pill from './Pill';
-import CounterView from './CounterView';
+import theme from '../theme';
+import ReviewItem from './ReviewItem';
 
-const RepositoryItem = ({ item }) => {
-  const parseToK = n => n >= 1000 ? (n/1000).toFixed(1) + 'k' : n
-
+export const ReviewListContainer = ({ reviews }) => {
+  const list = reviews?.edges?.map(edge => edge.node) || []
+console.log('list', list)
+  const ItemSeparator = () => <View style={styles.separator} />;
   return (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Image source={{uri: item.ownerAvatarUrl}} style={styles.image}/>
-        <View style={styles.cardHeaderText}>
-          <Text fontSize="heading" fontWeight="bold">{item.fullName}</Text>
-          <Text color="description" style={styles.description}>{item.description}</Text>
-          <Pill text={item.language}/>
-        </View>
-      </View>
-      <View style={styles.cardContent}>
-        <CounterView style={styles.contentItem} name="Stars" value={parseToK(item.stargazersCount)}/>
-        <CounterView style={styles.contentItem} name="Forks" value={parseToK(item.forksCount)}/>
-        <CounterView style={styles.contentItem} name="Reviews" value={parseToK(item.reviewCount)}/>
-        <CounterView style={styles.contentItem} name="Rating" value={parseToK(item.ratingAverage)}/>
-      </View>
-    </View>
+    <FlatList
+      style={styles.list}
+      data={list}
+      renderItem={({item}) => <ReviewItem item={item}/>}
+      keyExtractor={(item) => item.id}
+      ItemSeparatorComponent={ItemSeparator}
+    />
   );
 };
 
+const RepositoryItem = () => {
+  const { id } = useParams();
+  const { repository } = useRepository(id);
+
+  if (!repository) return;
+  return (
+    <View style={styles.container}>
+      <RepositoryInfo repository={repository}/>
+      <Pressable style={styles.button.container} onPress={null}>
+        <Text fontWeight='bold' style={styles.button.text}>Open in GitHub</Text>
+      </Pressable>
+      <ReviewListContainer reviews={repository?.reviews} />
+    </View>
+  )
+};
+
 const styles = StyleSheet.create({
-  card: {
-    width: '92%',
-    backgroundColor: 'white',
-    padding: 16,
-    marginHorizontal: 15,
-    marginVertical: 5,
-    borderRadius: 5,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  cardHeaderText: {
+  container: {
     flex: 1,
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: theme.colors.background,
   },
-  cardContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  button: {
+    container: {
+      backgroundColor: theme.colors.blue,
+      borderRadius: 5,
+      padding: 15,
+      width: '92%',
+      marginVertical: 10,
+    },
+    text: {
+      color: theme.colors.white,
+      textAlign: 'center',
+    },
   },
-  contentItem: {
-    flexGrow: 1,
+  list: {
+    backgroundColor: theme.colors.background,
+    flex: 1,
+    width: '100%'
   },
-  description: {
-    flexWrap: 'wrap',
-    width: '90%',
-  },
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 10,
-    marginRight: 16,
+  separator: {
+    height: 10,
   },
 });
 
